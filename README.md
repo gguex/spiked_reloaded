@@ -1,2 +1,2 @@
 # Spiked reloaded
-It is a remake of the (old and unknown) game "spiked", where I had a lot of fun playing as a kid. This project is to train to code in javascript with phaser.
+This project aims at remaking the (old and unknown) game "Spiked", with which I had a lot of fun as a kid. Ultimately, this project helps me to train to code in JavaScript with Phaser.
