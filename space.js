@@ -14,9 +14,6 @@ class Space extends Phaser.Scene {
     }
 
     create() {
-        
-        // The player
-        gameState.player = new Player(this, 200, 300);
 
         // Animation for the asteroid
         let asteroidFrames = this.anims.generateFrameNames('asteroid', {
@@ -31,22 +28,46 @@ class Space extends Phaser.Scene {
         });
         // Animation for the explosion
         this.anims.create({key: 'explosionAnim', frames: 'explosion',
-            frameRate: 40 
+            frameRate: 15
         });
 
+        // The player
+        gameState.player = new Player(this, 200, 300);
+        // The spike
+        gameState.spike = new Spike(this, 400, 300);
         // Group for asteroids
         gameState.asteroids = this.add.group({
             classType: Asteroid
         });
-        // One asteroid
-        gameState.asteroids.create(600, 300)
 
-        // The spike
-        gameState.spike = new Spike(this, 400, 300);
+        // Function to create an asteroid 
+        function asteroidGen(){
+            let roll = Math.random()
+            if(roll > 0.9){
+                let posX = Math.random() * constants.WIDTH;
+                let posY = Math.random() * constants.HEIGHT;
+                let speedX = Math.random() * 300;
+                let speedY = Math.random() * 300;
+                let explosion = gameState.explosions.create(posX, posY);
+                explosion.on('animationcomplete', () => {
+                    let asteroid = gameState.asteroids.create(posX, posY);
+                    asteroid.setVelocity(speedX, speedY);
+                });
+            }
+        }
+
+        // Event for the asteroid 
+        const astroidGenLoop = this.time.addEvent({
+            delay: 500,
+            callback: asteroidGen,
+            callbackScope: this,
+            loop: true,
+          });
+
 
         // Bullets
         gameState.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
-
+        // Fill the bullets
         gameState.bullets.createMultiple({
             repeat: 10,
             key: 'bullet',
