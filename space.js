@@ -15,7 +15,7 @@ class Space extends Phaser.Scene {
 
     create() {
 
-        // Animation for the asteroid
+        // Animation for asteroids
         let asteroidFrames = this.anims.generateFrameNames('asteroid', {
             start: 0, end: 29, prefix: 'asteroid-', suffix: '.png'
         });
@@ -26,7 +26,7 @@ class Space extends Phaser.Scene {
         this.anims.create({key: 'spikeAnim', frames: 'spike',
             frameRate: 15, repeat: -1
         });
-        // Animation for the explosion
+        // Animation for explosions
         this.anims.create({key: 'explosionAnim', frames: 'explosion',
             frameRate: 15
         });
@@ -34,16 +34,18 @@ class Space extends Phaser.Scene {
         // The player
         gameState.player = new Player(this, 200, 300);
         // The spike
-        gameState.spike = new Spike(this, 400, 300);
+        gameState.spike = new Spike(this, constants.WIDTH/2, constants.HEIGHT/2);
         // Group for asteroids
         gameState.asteroids = this.add.group({
             classType: Asteroid
         });
+        // Group for bullets
+        gameState.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
 
         // Function to create an asteroid 
         function asteroidGen(){
             let roll = Math.random()
-            if(roll > 0.9){
+            if(roll > 0.94 ){
                 let posX = Math.random() * constants.WIDTH;
                 let posY = Math.random() * constants.HEIGHT;
                 let speedX = Math.random() * 300;
@@ -62,11 +64,8 @@ class Space extends Phaser.Scene {
             callback: asteroidGen,
             callbackScope: this,
             loop: true,
-          });
+        });
 
-
-        // Bullets
-        gameState.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
         // Fill the bullets
         gameState.bullets.createMultiple({
             repeat: 10,
@@ -75,6 +74,7 @@ class Space extends Phaser.Scene {
             visible: false
         });
 
+        // Time to count the last bullet fired
         gameState.lastFired = 0;
 
         // Explosions
