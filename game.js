@@ -27,7 +27,7 @@ const config = {
 		default: 'arcade',
 		arcade: {
 			enableBody: true,
-      debug: false
+      debug: true
 		}
     },
     scene: [Space]

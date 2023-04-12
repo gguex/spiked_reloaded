@@ -8,7 +8,8 @@ class Space extends Phaser.Scene {
         this.load.image('ship', 'src/img/ship.png');
         this.load.image('bullet', 'src/img/bullet.png');
         this.load.atlas('asteroid', 'src/img/asteroid.png', 'src/img/asteroid.json');
-        this.load.atlas('spike', 'src/img/spike.png', 'src/img/spike.json');
+        this.load.spritesheet('spike', 'src/img/spike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
+        this.load.spritesheet('explosion', 'src/img/explosion.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
 
     }
 
@@ -24,13 +25,13 @@ class Space extends Phaser.Scene {
         this.anims.create({key: 'asteroidAnim', frames: asteroidFrames,
             frameRate: 15, repeat: -1
         });
-
         // Animation for the spike
-        let spikeFrames = this.anims.generateFrameNames('spike', {
-            start: 1, end: 16, prefix: 'spike_'
-        });
-        this.anims.create({key: 'spikeAnim', frames: spikeFrames,
+        this.anims.create({key: 'spikeAnim', frames: 'spike',
             frameRate: 15, repeat: -1
+        });
+        // Animation for the explosion
+        this.anims.create({key: 'explosionAnim', frames: 'explosion',
+            frameRate: 40 
         });
 
         // Group for asteroids
@@ -42,7 +43,6 @@ class Space extends Phaser.Scene {
 
         // The spike
         gameState.spike = new Spike(this, 400, 300);
-
 
         // Bullets
         gameState.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
@@ -56,6 +56,8 @@ class Space extends Phaser.Scene {
 
         gameState.lastFired = 0;
 
+        // Explosions
+        gameState.explosions = this.add.group({classType: Explosion, runChildUpdate: true})
 
         // The keys
         gameState.cursors = this.input.keyboard.createCursorKeys();
@@ -63,13 +65,21 @@ class Space extends Phaser.Scene {
 
         // Colliders
         this.physics.add.collider(gameState.player, gameState.asteroids);
-        this.physics.add.collider(gameState.asteroids, gameState.asteroids);
         this.physics.add.collider(gameState.player, gameState.bullets);
+        this.physics.add.collider(gameState.player, gameState.spike);
+        this.physics.add.collider(gameState.asteroids, gameState.asteroids);
         this.physics.add.collider(gameState.asteroids, gameState.bullets);
+        this.physics.add.collider(gameState.asteroids, gameState.spike, (asteroid, spike) => {
+            gameState.explosions.create(asteroid.x, asteroid.y);
+            asteroid.destroy();
+        }, 
+        null, this);
+        this.physics.add.collider(gameState.spike, gameState.bullets);
+       
 
     }
 
-    update(time) {
+    update(time) { 
 
         // Turning controls
 		if (gameState.cursors.left.isDown) {
