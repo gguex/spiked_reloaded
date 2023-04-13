@@ -10,10 +10,16 @@ class Space extends Phaser.Scene {
         this.load.atlas('asteroid', 'src/img/asteroid.png', 'src/img/asteroid.json');
         this.load.spritesheet('spike', 'src/img/spike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
         this.load.spritesheet('explosion', 'src/img/explosion.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
+        this.load.image('gift', 'src/img/box.png');
+        this.load.image('hud', 'src/img/hud.png');
 
     }
 
     create() {
+
+        gameState.hud1 = this.add.image(20, 20, 'hud').setScale(0.5);
+        gameState.hud2 = this.add.image(constants.WIDTH-20, constants.HEIGHT-20, 'hud').setScale(0.5);
+        gameState.hud1.depth = 1000;
 
         // Animation for asteroids
         let asteroidFrames = this.anims.generateFrameNames('asteroid', {
@@ -32,15 +38,15 @@ class Space extends Phaser.Scene {
         });
 
         // The player
-        gameState.player = new Player(this, 200, 300);
+        gameState.player = new Player(this, constants.WIDTH/4, constants.HEIGHT/4);
         // The spike
         gameState.spike = new Spike(this, constants.WIDTH/2, constants.HEIGHT/2);
         // Group for asteroids
-        gameState.asteroids = this.add.group({
-            classType: Asteroid
-        });
+        gameState.asteroids = this.add.group({classType: Asteroid});
         // Group for bullets
         gameState.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
+        // Group for gifts
+        gameState.gifts = this.add.group({classType: Gift})
 
         // Function to create an asteroid 
         function asteroidGen(){
@@ -52,8 +58,14 @@ class Space extends Phaser.Scene {
                 let speedY = Math.random() * 300;
                 let explosion = gameState.explosions.create(posX, posY);
                 explosion.on('animationcomplete', () => {
-                    let asteroid = gameState.asteroids.create(posX, posY);
-                    asteroid.setVelocity(speedX, speedY);
+                    let roll2 = Math.random();
+                    if(roll2 > 0.5){
+                        let asteroid = gameState.asteroids.create(posX, posY);
+                        asteroid.setVelocity(speedX, speedY);
+                    } else {
+                        let gift = gameState.gifts.create(posX, posY);
+                        gift.setVelocity(speedX, speedY);
+                    }
                 });
             }
         }
@@ -88,14 +100,26 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(gameState.player, gameState.asteroids);
         this.physics.add.collider(gameState.player, gameState.bullets);
         this.physics.add.collider(gameState.player, gameState.spike);
+        this.physics.add.overlap(gameState.player, gameState.gifts, (player, gift) => {
+            gift.destroy();
+        }, null, this);
         this.physics.add.collider(gameState.asteroids, gameState.asteroids);
         this.physics.add.collider(gameState.asteroids, gameState.bullets);
+        this.physics.add.collider(gameState.asteroids, gameState.gifts);
         this.physics.add.collider(gameState.asteroids, gameState.spike, (asteroid, spike) => {
             gameState.explosions.create(asteroid.x, asteroid.y);
             asteroid.destroy();
-        }, 
-        null, this);
+        }, null, this);
         this.physics.add.collider(gameState.spike, gameState.bullets);
+        this.physics.add.overlap(gameState.spike, gameState.gifts, (spike, gift) => {
+            gameState.explosions.create(gift.x, gift.y);
+            gift.destroy();
+        }, null, this);
+        this.physics.add.collider(gameState.gifts, gameState.gifts);
+        this.physics.add.overlap(gameState.gifts, gameState.bullets, (gift, bullet) => {
+            gameState.explosions.create(gift.x, gift.y);
+            gift.destroy(); 
+        }, null, this);
        
 
     }
