@@ -20,7 +20,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         
     }
 
-    // Turn methods
     turnClockwise() {
         this.setAngularVelocity(constants.ANGULAR_VELOCITY);
     }
@@ -31,7 +30,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.setAngularVelocity(0);
     }
 
-    // Thrust methods
     thrust(scene) {
         scene.physics.velocityFromRotation(this.rotation, constants.ACCELERATION, this.body.acceleration);
     }
@@ -39,27 +37,45 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.setAcceleration(0);
     }
 
-    // Fire method
     fire(scene){
-        // Check if firing is ok
+        
         if(scene.time.now > this.lastFired + constants.FIRING_DELAY){
 
-            // Reset lastFired
             this.lastFired = scene.time.now;
 
-            // Fire a bullet
-            let bullet = scene.bullets.create();
-            bullet.rotation = this.rotation;
-            let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
-            bullet.body.reset(
-                this.x + bulletDirection.x*this.body.width/1.5, 
-                this.y + bulletDirection.y*this.body.width/1.5
-            );
-            bullet.setVelocity(
-                bulletDirection.x * constants.BULLET_SPEED + this.body.velocity.x, 
-                bulletDirection.y * constants.BULLET_SPEED + this.body.velocity.y
-            );
-            console.log();
+            switch(this.items[this .itemsPointer - 1]){
+                case 'heavyBullet':
+                    let heavyBullet = scene.heavyBullets.create();
+                    heavyBullet.rotation = this.rotation;
+                    let heavyBulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
+                    heavyBullet.body.reset(
+                        this.x + heavyBulletDirection.x*this.body.width/1.5, 
+                        this.y + heavyBulletDirection.y*this.body.width/1.5
+                    );
+                    heavyBullet.setVelocity(
+                        heavyBulletDirection.x * constants.HEAVY_BULLET_SPEED + this.body.velocity.x, 
+                        heavyBulletDirection.y * constants.HEAVY_BULLET_SPEED + this.body.velocity.y
+                    );
+                    console.log();
+                    
+                    this.items.splice(this.itemsPointer - 1, 1);
+                    this.itemsPointer -= 1;
+
+                    break;
+                default:
+                    let bullet = scene.bullets.create();
+                    bullet.rotation = this.rotation;
+                    let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
+                    bullet.body.reset(
+                        this.x + bulletDirection.x*this.body.width/1.5, 
+                        this.y + bulletDirection.y*this.body.width/1.5
+                    );
+                    bullet.setVelocity(
+                        bulletDirection.x * constants.BULLET_SPEED + this.body.velocity.x, 
+                        bulletDirection.y * constants.BULLET_SPEED + this.body.velocity.y
+                    );
+                    console.log();
+            }
 
         }
     }

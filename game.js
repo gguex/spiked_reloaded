@@ -15,7 +15,7 @@ const constants = {
   BULLET_MASS: 1,
   HEAVY_BULLET_MASS: 1,
   BULLET_SPEED: 400,
-  HEAVY_BULLET_SPEED: 1000,
+  HEAVY_BULLET_SPEED: 1500,
   FIRING_DELAY: 400, 
   BULLET_LIFESPAN: 80,
 };
@@ -29,7 +29,7 @@ const config = {
 		default: 'arcade',
 		arcade: {
 			enableBody: true,
-      debug: true
+      debug: false
 		}
     },
     scene: [Space]
