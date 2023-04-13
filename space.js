@@ -21,7 +21,10 @@ class Space extends Phaser.Scene {
         // Huds
         this.hud1 = this.add.image(20, 20, 'hud').setScale(0.5);
         this.hud2 = this.add.image(constants.WIDTH-20, constants.HEIGHT-20, 'hud').setScale(0.5);
+        this.weaponDisplay1 = this.add.image(20, 20, 'hud').setScale(0.5);
         this.hud1.depth = 1000;
+        this.hud2.depth = 1000;
+        this.weaponDisplay1.depth = 1200;
 
         // Animation for asteroids
         let asteroidFrames = this.anims.generateFrameNames('asteroid', {
@@ -55,7 +58,7 @@ class Space extends Phaser.Scene {
         // Function to create an asteroid 
         function asteroidGen(){
             let roll = Math.random()
-            if(roll > 0.94 ){
+            if(roll > 0.9 ){
                 let posX = Math.random() * constants.WIDTH;
                 let posY = Math.random() * constants.HEIGHT;
                 let speedX = Math.random() * 300;
@@ -138,7 +141,7 @@ class Space extends Phaser.Scene {
 
         // Switch item
         if (this.cursors.down.isDown) {
-            this.player.switchItem();
+            this.player.switchItem(this);
         }
 
         // Firing controls
@@ -146,6 +149,14 @@ class Space extends Phaser.Scene {
             this.player.fire(this);
         }
 
+        // Image of weapon
+        if (this.player.items[this.player.itemsPointer - 1]){
+            if(this.player.items[this.player.itemsPointer - 1] == "heavyBullet"){
+                this.weaponDisplay1.setTexture('heavyBullet');
+            }
+        } else {
+            this.weaponDisplay1.setTexture('hud');
+        }
         
 	}
     

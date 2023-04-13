@@ -15,6 +15,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
         this.items = [];
         this.itemsPointer = 0;
+
+        this.lastSwitch = 0;
         
     }
 
@@ -64,15 +66,17 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     addItem(item) {
         this.itemsPointer = this.items.push(item);
-        console.log(this.items);
-        console.log(this.itemsPointer);
-        console.log(this.items[this.itemsPointer - 1]);
     }
 
-    switchItem() {
-        this.itemsPointer += 1;
-        if(this.itemsPointer > this.items.length){
-            this.itemsPointer = 0;
+    switchItem(scene) {
+        if(scene.time.now > this.lastSwitch + constants.FIRING_DELAY){
+
+            this.lastSwitch = scene.time.now;
+            this.itemsPointer += 1;
+            if(this.itemsPointer > this.items.length){
+                this.itemsPointer = 0;
+            }
+            console.log(this.items[this.itemsPointer - 1]);
         }
     }
 }
