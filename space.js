@@ -82,9 +82,6 @@ class Space extends Phaser.Scene {
             loop: true,
         });
 
-        // Time to count the last bullet fired
-        this.lastFired = 0;
-
         // Explosions
         this.explosions = this.add.group({classType: Explosion, runChildUpdate: true})
 
@@ -145,9 +142,8 @@ class Space extends Phaser.Scene {
         }
 
         // Firing controls
-        if (this.spacebar.isDown  && time > this.lastFired){
+        if (this.spacebar.isDown){
             this.player.fire(this);
-            this.lastFired = time + constants.FIRING_DELAY; 
         }
 
         

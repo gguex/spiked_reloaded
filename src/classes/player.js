@@ -11,6 +11,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.setBounce(constants.BOUNCE);
         this.setDrag(constants.DRAG);
 
+        this.lastFired = 0;
+
         this.items = [];
         this.itemsPointer = 0;
         
@@ -37,17 +39,27 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     // Fire method
     fire(scene){
-        let bullet = scene.bullets.create();
-        bullet.rotation = this.rotation;
-        let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
-        bullet.body.reset(
-            this.x + bulletDirection.x*this.body.width/1.5, 
-            this.y + bulletDirection.y*this.body.width/1.5
-        );
-        bullet.setVelocity(
-            bulletDirection.x * constants.BULLET_SPEED + this.body.velocity.x, 
-            bulletDirection.y * constants.BULLET_SPEED + this.body.velocity.y
-        );
+        // Check if firing is ok
+        if(scene.time.now > this.lastFired + constants.FIRING_DELAY){
+
+            // Reset lastFired
+            this.lastFired = scene.time.now;
+
+            // Fire a bullet
+            let bullet = scene.bullets.create();
+            bullet.rotation = this.rotation;
+            let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
+            bullet.body.reset(
+                this.x + bulletDirection.x*this.body.width/1.5, 
+                this.y + bulletDirection.y*this.body.width/1.5
+            );
+            bullet.setVelocity(
+                bulletDirection.x * constants.BULLET_SPEED + this.body.velocity.x, 
+                bulletDirection.y * constants.BULLET_SPEED + this.body.velocity.y
+            );
+            console.log();
+
+        }
     }
 
     addItem(item) {
