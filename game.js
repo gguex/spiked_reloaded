@@ -1,6 +1,3 @@
-const gameState = {
-};
-
 const constants = {
   WIDTH: 800,
   HEIGHT: 600,
@@ -12,10 +9,13 @@ const constants = {
   SPIKE_SCALE: 2.5,
   EXPLOSION_SCALE: 1.5,
   GIFT_SCALE: 1,
+  BULLET_SCALE: 1,
+  HEAVY_BULLET_SCALE: 1,
   DRAG: 0.1,
   BULLET_MASS: 1,
-  BULLET_SCALE: 1,
+  HEAVY_BULLET_MASS: 1,
   BULLET_SPEED: 400,
+  HEAVY_BULLET_SPEED: 1000,
   FIRING_DELAY: 400, 
   BULLET_LIFESPAN: 80,
 };

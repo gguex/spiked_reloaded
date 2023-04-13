@@ -1,18 +1,17 @@
-class Bullet extends Phaser.Physics.Arcade.Sprite{
+class HeavyBullet extends Phaser.Physics.Arcade.Sprite{
 
     constructor(scene, x, y) {
         
-        super(scene, x, y, 'bullet');
+        super(scene, x, y, 'heavyBullet');
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setScale(constants.BULLET_SCALE);
+        this.setScale(constants.HEAVY_BULLET_SCALE);
         this.body.setCircle(this.body.width / 2);
         this.setCollideWorldBounds(true);
         this.setBounce(constants.BOUNCE);
         this.setDrag(constants.DRAG);
-        this.body.setMass(constants.BULLET_MASS); 
-        this.lifespan = constants.BULLET_LIFESPAN;
+        this.body.setMass(constants.HEAVY_BULLET_MASS); 
 
     } 
 
@@ -23,16 +22,9 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
         this.setActive(true);
         this.setVisible(true);
         this.setVelocity(
-            bulletDirection.x * constants.BULLET_SPEED + player.body.velocity.x, 
-            bulletDirection.y * constants.BULLET_SPEED + player.body.velocity.y
+            bulletDirection.x * constants.HEAVY_BULLET_SPEED + player.body.velocity.x, 
+            bulletDirection.y * constants.HEAVY_BULLET_SPEED + player.body.velocity.y
         );
-    }
- 
-    update(time, delta){
-        this.lifespan -= 1;
-        if(this.lifespan < 0){
-            this.destroy();
-        }
     }
 
 }
