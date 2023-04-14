@@ -67,7 +67,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                         this.x + freezerDirection.x*this.body.width/1.5, 
                         this.y + freezerDirection.y*this.body.width/1.5
                     );
-                    freezerd.setVelocity(
+                    freezer.setVelocity(
                         freezerDirection.x * constants.HEAVY_BULLET_SPEED + this.body.velocity.x, 
                         freezerDirection.y * constants.HEAVY_BULLET_SPEED + this.body.velocity.y
                     );

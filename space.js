@@ -175,14 +175,14 @@ class Space extends Phaser.Scene {
             this.explosions.create(gift.x, gift.y);
             gift.destroy(); 
         });
-        this.physics.add.overlap(this.gifts, this.heavyBullets, (gift, freezer) => {
+        this.physics.add.overlap(this.gifts, this.freezers, (gift, freezer) => {
             freezer.capture(gift);
         });
         this.physics.add.collider(this.heavyBullets, this.heavyBullets);
         this.physics.add.overlap(this.heavyBullets, this.freezers, (heavyBullet, freezer) => {
             freezer.capture(heavyBullet);
         });
-        this.physics.add.collider(this.heavyBullets, this.bullet);
+        this.physics.add.collider(this.heavyBullets, this.bullets);
        
 
     }

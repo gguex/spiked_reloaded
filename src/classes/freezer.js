@@ -24,8 +24,10 @@ class Freezer extends Phaser.Physics.Arcade.Sprite{
     capture(object){
         if(this.captured){} else {
             this.captured = object;
-            this.setCollideWorldBounds(false);
             this.captured.setVelocity(0);
+            this.setVelocity(0);
+            this.setPosition(this.captured.x, this.captured.y);
+            this.setCollideWorldBounds(false);
             this.setScale(constants.FREEZER_SCALE);
         }
     }
