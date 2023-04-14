@@ -20,7 +20,31 @@ class Space extends Phaser.Scene {
 
     create() {
 
-        // Huds
+        // Animations
+        let asteroidFrames = this.anims.generateFrameNames('asteroid', {
+            start: 0, end: 29, prefix: 'asteroid-', suffix: '.png'
+        });
+        this.anims.create({key: 'asteroidAnim', frames: asteroidFrames,
+            frameRate: 15, repeat: -1
+        });
+        this.anims.create({key: 'spikeAnim', frames: 'spike',
+            frameRate: 15, repeat: -1
+        });
+        this.anims.create({key: 'explosionAnim', frames: 'explosion',
+            frameRate: 15
+        });
+
+        // Game objects
+        this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
+        this.player2 = new Player(this, 3*constants.WIDTH/4, 3*constants.HEIGHT/4, 'player2').setAngle(180);
+        this.spike = new Spike(this, constants.WIDTH/2, constants.HEIGHT/2);
+        this.asteroids = this.add.group({classType: Asteroid});
+        this.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
+        this.gifts = this.add.group({classType: Gift})
+        this.heavyBullets = this.add.group({classType: HeavyBullet});
+        this.explosions = this.add.group({classType: Explosion, runChildUpdate: true})
+
+        // Hud
         this.hud1 = this.add.image(20, 20, 'hud1').setScale(0.5);
         this.hud2 = this.add.image(constants.WIDTH-20, constants.HEIGHT-20, 'hud2').setScale(0.5);
         this.weaponDisplay1 = this.add.image(20, 20, 'hud1').setScale(0.5);
@@ -29,43 +53,11 @@ class Space extends Phaser.Scene {
         this.hud2.depth = 1000;
         this.weaponDisplay1.depth = 1200;
         this.weaponDisplay2.depth = 1200;
-
-        // Animation for asteroids
-        let asteroidFrames = this.anims.generateFrameNames('asteroid', {
-            start: 0, end: 29, prefix: 'asteroid-', suffix: '.png'
-        });
-        this.anims.create({key: 'asteroidAnim', frames: asteroidFrames,
-            frameRate: 15, repeat: -1
-        });
-        // Animation for the spike
-        this.anims.create({key: 'spikeAnim', frames: 'spike',
-            frameRate: 15, repeat: -1
-        });
-        // Animation for explosions
-        this.anims.create({key: 'explosionAnim', frames: 'explosion',
-            frameRate: 15
-        });
-
-        // The players
-        this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
-        this.player2 = new Player(this, 3*constants.WIDTH/4, 3*constants.HEIGHT/4, 'player2').setAngle(180);
-        // The spike
-        this.spike = new Spike(this, constants.WIDTH/2, constants.HEIGHT/2);
-        // Group for asteroids
-        this.asteroids = this.add.group({classType: Asteroid});
-        // Group for bullets
-        this.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
-        // Group for gifts
-        this.gifts = this.add.group({classType: Gift})
-        // Group for heavyBullets
-        this.heavyBullets = this.add.group({classType: HeavyBullet});
-
-        // Life display 
         this.lifeDisplay1 = this.add.text(40, 20, this.player1.life, { fontSize: '15px', fill: 'lightblue' });
         this.lifeDisplay2 = this.add.text(constants.WIDTH-40, constants.HEIGHT-20, this.player2.life, { fontSize: '15px', fill: 'Bisque', rtl: true});
 
-        // Function to create an asteroid 
-        function asteroidGen(){
+        // Objects creation
+        function objectGen(){
             let roll = Math.random()
             if(roll > 0.9 ){
                 let posX = Math.random() * constants.WIDTH;
@@ -85,17 +77,12 @@ class Space extends Phaser.Scene {
                 });
             }
         }
-
-        // Event for the asteroid 
-        const astroidGenLoop = this.time.addEvent({
+        const objectGenLoop = this.time.addEvent({
             delay: 500,
-            callback: asteroidGen,
+            callback: objectGen,
             callbackScope: this,
             loop: true,
         });
-
-        // Explosions
-        this.explosions = this.add.group({classType: Explosion, runChildUpdate: true})
 
         // The keys
         this.leftP1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
