@@ -18,6 +18,7 @@ const constants = {
   HEAVY_BULLET_SPEED: 1500,
   FIRING_DELAY: 400, 
   BULLET_LIFESPAN: 80,
+  STARTING_LIFE: 3,
 };
 
 const config = {

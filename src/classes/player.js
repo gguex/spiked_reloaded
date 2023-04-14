@@ -1,8 +1,8 @@
 class Player extends Phaser.Physics.Arcade.Sprite{
 
-    constructor(scene, x, y) {
+    constructor(scene, x, y, texture) {
 
-        super(scene, x, y, 'ship');
+        super(scene, x, y, texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.setScale(constants.PLAYER_SCALE);
@@ -17,6 +17,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.itemsPointer = 0;
 
         this.lastSwitch = 0;
+
+        this.life = constants.STARTING_LIFE;
         
     }
 
@@ -46,7 +48,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             switch(this.items[this .itemsPointer - 1]){
                 case 'heavyBullet':
                     let heavyBullet = scene.heavyBullets.create();
-                    heavyBullet.rotation = this.rotation;
                     let heavyBulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
                     heavyBullet.body.reset(
                         this.x + heavyBulletDirection.x*this.body.width/1.5, 
@@ -64,7 +65,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                     break;
                 default:
                     let bullet = scene.bullets.create();
-                    bullet.rotation = this.rotation;
                     let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
                     bullet.body.reset(
                         this.x + bulletDirection.x*this.body.width/1.5, 
@@ -92,7 +92,14 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             if(this.itemsPointer > this.items.length){
                 this.itemsPointer = 0;
             }
-            console.log(this.items[this.itemsPointer - 1]);
         }
     }
+
+    kill(posX, posY, angle){
+        this.life -= 1;
+        this.body.reset(posX, posY);
+        this.setVelocity(0);
+        this.setAngle(angle)
+    }
+
 }
