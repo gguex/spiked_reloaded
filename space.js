@@ -11,10 +11,13 @@ class Space extends Phaser.Scene {
         this.load.atlas('asteroid', 'src/img/asteroid.png', 'src/img/asteroid.json');
         this.load.spritesheet('spike', 'src/img/spike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
         this.load.spritesheet('explosion', 'src/img/explosion.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
-        this.load.image('gift', 'src/img/box.png');
         this.load.image('hud1', 'src/img/hud1.png');
         this.load.image('hud2', 'src/img/hud2.png');
         this.load.image('heavyBullet', 'src/img/heavyBullet.png');
+        this.load.spritesheet('attractor', 'src/img/attractor.png', {frameWidth: 192, frameHeight: 192, endFrame: 31});
+        this.load.spritesheet('freezer', 'src/img/freezer.png', {frameWidth: 192, frameHeight: 192, endFrame: 31});
+        this.load.image('heavyBulletGift', 'src/img/blueGift.png');
+        this.load.image('freezerGift', 'src/img/greenGift.png');
 
     }
 
@@ -33,6 +36,12 @@ class Space extends Phaser.Scene {
         this.anims.create({key: 'explosionAnim', frames: 'explosion',
             frameRate: 15
         });
+        this.anims.create({key: 'attractorAnim', frames: 'attractor',
+            frameRate: 30, repeat: -1
+        });
+        this.anims.create({key: 'freezerAnim', frames: 'freezer',
+            frameRate: 30, repeat: -1
+        });
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -42,13 +51,14 @@ class Space extends Phaser.Scene {
         this.bullets = this.add.group({classType: Bullet, runChildUpdate: true});
         this.gifts = this.add.group({classType: Gift})
         this.heavyBullets = this.add.group({classType: HeavyBullet});
+        this.freezers = this.add.group({classType: Freezer, runChildUpdate: true});
         this.explosions = this.add.group({classType: Explosion, runChildUpdate: true})
 
         // Hud
         this.hud1 = this.add.image(20, 20, 'hud1').setScale(0.5);
         this.hud2 = this.add.image(constants.WIDTH-20, constants.HEIGHT-20, 'hud2').setScale(0.5);
-        this.weaponDisplay1 = this.add.image(20, 20, 'hud1').setScale(0.5);
-        this.weaponDisplay2 = this.add.image(constants.WIDTH-20, constants.HEIGHT-20, 'hud2').setScale(0.5);
+        this.weaponDisplay1 = this.add.sprite(20, 20, 'hud1').setScale(0.5);
+        this.weaponDisplay2 = this.add.sprite(constants.WIDTH-20, constants.HEIGHT-20, 'hud2').setScale(0.5);
         this.hud1.depth = 1000;
         this.hud2.depth = 1000;
         this.weaponDisplay1.depth = 1200;
@@ -71,7 +81,12 @@ class Space extends Phaser.Scene {
                         let asteroid = this.asteroids.create(posX, posY);
                         asteroid.setVelocity(speedX, speedY);
                     } else {
-                        let gift = this.gifts.create(posX, posY);
+                        let roll3 = Math.random();
+                        let giftname = 'heavyBulletGift';
+                        if(roll3 > 0.5){
+                            giftname = 'freezerGift';
+                        }
+                        let gift = this.gifts.create(posX, posY, giftname);
                         gift.setVelocity(speedX, speedY);
                     }
                 });
@@ -101,30 +116,39 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(this.player1, this.asteroids);
         this.physics.add.collider(this.player1, this.bullets);
         this.physics.add.collider(this.player1, this.heavyBullets);
+        this.physics.add.overlap(this.player1, this.freezers, (player, freezer) => {
+            freezer.capture(player);
+        });
         this.physics.add.collider(this.player1, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
             player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
             this.lifeDisplay1.setText(this.player1.life);
         });
         this.physics.add.overlap(this.player1, this.gifts, (player, gift) => {
+            player.addItem(gift.giftType);
             gift.destroy();
-            player.addItem('heavyBullet');
         });
         this.physics.add.collider(this.player2, this.asteroids);
         this.physics.add.collider(this.player2, this.bullets);
         this.physics.add.collider(this.player2, this.heavyBullets);
+        this.physics.add.overlap(this.player2, this.freezers, (player, freezer) => {
+            freezer.capture(player);
+        });
         this.physics.add.collider(this.player2, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
             player.kill(3*constants.WIDTH/4, 3*constants.HEIGHT/4, 180);
             this.lifeDisplay2.setText(this.player2.life);
         });
         this.physics.add.overlap(this.player2, this.gifts, (player, gift) => {
+            player.addItem(gift.giftType);
             gift.destroy();
-            player.addItem('heavyBullet');
         });
         this.physics.add.collider(this.asteroids, this.asteroids);
         this.physics.add.collider(this.asteroids, this.bullets);
         this.physics.add.collider(this.asteroids, this.heavyBullets);
+        this.physics.add.overlap(this.asteroids, this.freezers, (asteroid, freezer) => {
+            freezer.capture(asteroid);
+        });
         this.physics.add.collider(this.asteroids, this.gifts);
         this.physics.add.collider(this.asteroids, this.spike, (asteroid, spike) => {
             this.explosions.create(asteroid.x, asteroid.y);
@@ -134,6 +158,9 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(this.spike, this.heavyBullets, (spike, heavyBullet) => {
             this.explosions.create(heavyBullet.x, heavyBullet.y);
             heavyBullet.destroy();
+        });
+        this.physics.add.overlap(this.spike, this.freezers, (spike, freezer) => {
+            freezer.capture(spike);
         });
         this.physics.add.overlap(this.spike, this.gifts, (spike, gift) => {
             this.explosions.create(gift.x, gift.y);
@@ -148,12 +175,19 @@ class Space extends Phaser.Scene {
             this.explosions.create(gift.x, gift.y);
             gift.destroy(); 
         });
-        this.physics.add.collider(this.bullets, this.heavyBullets);
+        this.physics.add.overlap(this.gifts, this.heavyBullets, (gift, freezer) => {
+            freezer.capture(gift);
+        });
+        this.physics.add.collider(this.heavyBullets, this.heavyBullets);
+        this.physics.add.overlap(this.heavyBullets, this.freezers, (heavyBullet, freezer) => {
+            freezer.capture(heavyBullet);
+        });
+        this.physics.add.collider(this.heavyBullets, this.bullet);
        
 
     }
 
-    update(time) { 
+    update() { 
 
         // Turning controls
 		if (this.leftP1.isDown) {
@@ -199,20 +233,36 @@ class Space extends Phaser.Scene {
             this.player2.fire(this);
         }
 
-        // Image of weapon
-        if (this.player1.items[this.player1.itemsPointer - 1]){
-            if(this.player1.items[this.player1.itemsPointer - 1] == "heavyBullet"){
+        // Hud display
+        switch(this.player1.items[this.player1.itemsPointer - 1]){
+            case 'heavyBulletGift':
+                this.weaponDisplay1.setScale(0.5);
                 this.weaponDisplay1.setTexture('heavyBullet');
-            }
-        } else {
-            this.weaponDisplay1.setTexture('hud1');
+                break;
+            case 'freezerGift':
+                this.weaponDisplay1.setScale(0.1);
+                if(!(this.weaponDisplay1.anims.isPlaying)){
+                    this.weaponDisplay1.play('freezerAnim');
+                }
+                break;
+            default:
+                this.weaponDisplay1.setScale(0.5);
+                this.weaponDisplay1.setTexture('hud1');
         }
-        if (this.player2.items[this.player2.itemsPointer - 1]){
-            if(this.player2.items[this.player2.itemsPointer - 1] == "heavyBullet"){
+        switch(this.player2.items[this.player2.itemsPointer - 1]){
+            case 'heavyBulletGift':
+                this.weaponDisplay2.setScale(0.5);
                 this.weaponDisplay2.setTexture('heavyBullet');
-            }
-        } else {
-            this.weaponDisplay2.setTexture('hud2');
+                break;
+            case 'freezerGift':
+                this.weaponDisplay2.setScale(0.1);
+                if(!(this.weaponDisplay2.anims.isPlaying)){
+                    this.weaponDisplay2.play('freezerAnim');
+                }
+                break;
+            default:
+                this.weaponDisplay2.setScale(0.5);
+                this.weaponDisplay2.setTexture('hud2');
         }
         
 	}

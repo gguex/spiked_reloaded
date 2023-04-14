@@ -46,10 +46,10 @@ class Player extends Phaser.Physics.Arcade.Sprite{
             this.lastFired = scene.time.now;
 
             switch(this.items[this .itemsPointer - 1]){
-                case 'heavyBullet':
+                case 'heavyBulletGift':
                     let heavyBullet = scene.heavyBullets.create();
                     let heavyBulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
-                    heavyBullet.body.reset(
+                    heavyBullet.setPosition (
                         this.x + heavyBulletDirection.x*this.body.width/1.5, 
                         this.y + heavyBulletDirection.y*this.body.width/1.5
                     );
@@ -57,16 +57,27 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                         heavyBulletDirection.x * constants.HEAVY_BULLET_SPEED + this.body.velocity.x, 
                         heavyBulletDirection.y * constants.HEAVY_BULLET_SPEED + this.body.velocity.y
                     );
-                    console.log();
-                    
                     this.items.splice(this.itemsPointer - 1, 1);
                     this.itemsPointer -= 1;
-
+                    break;
+                case 'freezerGift':
+                    let freezer = scene.freezers.create();
+                    let freezerDirection = scene.physics.velocityFromRotation(this.rotation, 1);
+                    freezer.setPosition (
+                        this.x + freezerDirection.x*this.body.width/1.5, 
+                        this.y + freezerDirection.y*this.body.width/1.5
+                    );
+                    freezerd.setVelocity(
+                        freezerDirection.x * constants.HEAVY_BULLET_SPEED + this.body.velocity.x, 
+                        freezerDirection.y * constants.HEAVY_BULLET_SPEED + this.body.velocity.y
+                    );
+                    this.items.splice(this.itemsPointer - 1, 1);
+                    this.itemsPointer -= 1;
                     break;
                 default:
                     let bullet = scene.bullets.create();
                     let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
-                    bullet.body.reset(
+                    bullet.setPosition(
                         this.x + bulletDirection.x*this.body.width/1.5, 
                         this.y + bulletDirection.y*this.body.width/1.5
                     );
@@ -74,7 +85,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                         bulletDirection.x * constants.BULLET_SPEED + this.body.velocity.x, 
                         bulletDirection.y * constants.BULLET_SPEED + this.body.velocity.y
                     );
-                    console.log();
             }
 
         }
@@ -97,7 +107,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     kill(posX, posY, angle){
         this.life -= 1;
-        this.body.reset(posX, posY);
+        this.setPosition(posX, posY);
         this.setVelocity(0);
         this.setAngle(angle)
     }
