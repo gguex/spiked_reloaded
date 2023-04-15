@@ -18,6 +18,7 @@ class Space extends Phaser.Scene {
         this.load.spritesheet('freezer', 'src/img/freezer.png', {frameWidth: 192, frameHeight: 192, endFrame: 31});
         this.load.image('heavyBulletGift', 'src/img/blueGift.png');
         this.load.image('freezerGift', 'src/img/greenGift.png');
+        this.load.image('attractorGift', 'src/img/purpleGift.png');
 
     }
 
@@ -36,12 +37,13 @@ class Space extends Phaser.Scene {
         this.anims.create({key: 'explosionAnim', frames: 'explosion',
             frameRate: 15
         });
-        this.anims.create({key: 'attractorAnim', frames: 'attractor',
-            frameRate: 30, repeat: -1
-        });
         this.anims.create({key: 'freezerAnim', frames: 'freezer',
             frameRate: 30, repeat: -1
         });
+        this.anims.create({key: 'attractorAnim', frames: 'attractor',
+            frameRate: 30, repeat: -1
+        });
+        
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -52,6 +54,7 @@ class Space extends Phaser.Scene {
         this.gifts = this.add.group({classType: Gift})
         this.heavyBullets = this.add.group({classType: HeavyBullet});
         this.freezers = this.add.group({classType: Freezer, runChildUpdate: true});
+        this.attractors = this.add.group({classType: Attractor, runChildUpdate: true});
         this.explosions = this.add.group({classType: Explosion, runChildUpdate: true})
 
         // Hud
@@ -83,8 +86,10 @@ class Space extends Phaser.Scene {
                     } else {
                         let roll3 = Math.random();
                         let giftname = 'heavyBulletGift';
-                        if(roll3 > 0.5){
+                        if (roll3 > 0.67){
                             giftname = 'freezerGift';
+                        } else if (roll3 > 0.33){
+                            giftname = 'attractorGift';
                         }
                         let gift = this.gifts.create(posX, posY, giftname);
                         gift.setVelocity(speedX, speedY);
@@ -119,6 +124,9 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.player1, this.freezers, (player, freezer) => {
             freezer.capture(player);
         });
+        this.physics.add.overlap(this.player1, this.attractors, (player, attractor) => {
+            attractor.capture(player);
+        });
         this.physics.add.collider(this.player1, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
             player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
@@ -133,6 +141,9 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(this.player2, this.heavyBullets);
         this.physics.add.overlap(this.player2, this.freezers, (player, freezer) => {
             freezer.capture(player);
+        });
+        this.physics.add.overlap(this.player2, this.attractors, (player, attractor) => {
+            attractor.capture(player);
         });
         this.physics.add.collider(this.player2, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
@@ -149,6 +160,9 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.asteroids, this.freezers, (asteroid, freezer) => {
             freezer.capture(asteroid);
         });
+        this.physics.add.overlap(this.asteroids, this.attractors, (asteroid, attractor) => {
+            attractor.capture(asteroid);
+        });
         this.physics.add.collider(this.asteroids, this.gifts);
         this.physics.add.collider(this.asteroids, this.spike, (asteroid, spike) => {
             this.explosions.create(asteroid.x, asteroid.y);
@@ -161,6 +175,9 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.spike, this.freezers, (spike, freezer) => {
             freezer.capture(spike);
+        });
+        this.physics.add.overlap(this.spike, this.attractors, (spike, attractor) => {
+            attractor.capture(spike);
         });
         this.physics.add.overlap(this.spike, this.gifts, (spike, gift) => {
             this.explosions.create(gift.x, gift.y);
@@ -178,9 +195,15 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.gifts, this.freezers, (gift, freezer) => {
             freezer.capture(gift);
         });
+        this.physics.add.overlap(this.gifts, this.attractors, (gift, attractor) => {
+            attractor.capture(gift);
+        });
         this.physics.add.collider(this.heavyBullets, this.heavyBullets);
         this.physics.add.overlap(this.heavyBullets, this.freezers, (heavyBullet, freezer) => {
             freezer.capture(heavyBullet);
+        });
+        this.physics.add.overlap(this.heavyBullets, this.attractors, (heavyBullet, attractor) => {
+            attractor.capture(heavyBullet);
         });
         this.physics.add.collider(this.heavyBullets, this.bullets);
        
@@ -233,7 +256,7 @@ class Space extends Phaser.Scene {
             this.player2.fire(this);
         }
 
-        // Hud display
+        // Hud display player 1
         switch(this.player1.items[this.player1.itemsPointer - 1]){
             case 'heavyBulletGift':
                 this.weaponDisplay1.setScale(0.5);
@@ -241,14 +264,29 @@ class Space extends Phaser.Scene {
                 break;
             case 'freezerGift':
                 this.weaponDisplay1.setScale(0.1);
-                if(!(this.weaponDisplay1.anims.isPlaying)){
+                if(this.weaponDisplay1.anims.currentAnim){
+                    if(this.weaponDisplay1.anims.currentAnim.key != 'freezerAnim'){
+                        this.weaponDisplay1.play('freezerAnim');
+                    }
+                } else {
                     this.weaponDisplay1.play('freezerAnim');
-                }
+                } 
+                break;
+            case 'attractorGift':
+                this.weaponDisplay1.setScale(0.1);
+                if(this.weaponDisplay1.anims.currentAnim){
+                    if(this.weaponDisplay1.anims.currentAnim.key != 'attractorAnim'){
+                        this.weaponDisplay1.play('attractorAnim');
+                    }
+                } else {
+                    this.weaponDisplay1.play('attractorAnim');
+                } 
                 break;
             default:
                 this.weaponDisplay1.setScale(0.5);
                 this.weaponDisplay1.setTexture('hud1');
         }
+        // Hud display player 2
         switch(this.player2.items[this.player2.itemsPointer - 1]){
             case 'heavyBulletGift':
                 this.weaponDisplay2.setScale(0.5);
@@ -256,9 +294,23 @@ class Space extends Phaser.Scene {
                 break;
             case 'freezerGift':
                 this.weaponDisplay2.setScale(0.1);
-                if(!(this.weaponDisplay2.anims.isPlaying)){
+                if(this.weaponDisplay2.anims.currentAnim){
+                    if(this.weaponDisplay2.anims.currentAnim.key != 'freezerAnim'){
+                        this.weaponDisplay2.play('freezerAnim');
+                    }
+                } else {
                     this.weaponDisplay2.play('freezerAnim');
-                }
+                } 
+                break;
+            case 'attractorGift':
+                this.weaponDisplay2.setScale(0.1);
+                if(this.weaponDisplay2.anims.currentAnim){
+                    if(this.weaponDisplay2.anims.currentAnim.key != 'attractorAnim'){
+                        this.weaponDisplay2.play('attractorAnim');
+                    }
+                } else {
+                    this.weaponDisplay2.play('attractorAnim');
+                } 
                 break;
             default:
                 this.weaponDisplay2.setScale(0.5);

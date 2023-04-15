@@ -13,6 +13,7 @@ const constants = {
   HEAVY_BULLET_SCALE: 1,
   FREEZER_BULLET_SCALE: 0.2,
   FREEZER_SCALE: 0.5,
+  ATTRACTOR_SCALE: 0.7,
   DRAG: 0.1,
   BULLET_MASS: 1,
   HEAVY_BULLET_MASS: 1,
@@ -22,6 +23,7 @@ const constants = {
   BULLET_LIFESPAN: 80,
   FREEZER_LIFESPAN: 2000,
   STARTING_LIFE: 3,
+  ATTRACTOR_STRENGTH: 3
 };
 
 const config = {
