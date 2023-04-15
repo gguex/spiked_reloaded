@@ -12,7 +12,7 @@
         this.setBounce(constants.BOUNCE);
         this.setDrag(constants.DRAG);
         this.play('asteroidAnim');
-
+        this.attractor = undefined;
     }
 
 }

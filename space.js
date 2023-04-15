@@ -188,10 +188,14 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.asteroids, this.attractors, (asteroid, attractor) => {
             attractor.capture(asteroid);
+            asteroid.attractor = attractor;
         });
         this.physics.add.overlap(this.asteroids, this.spikeBullets, (asteroid, spikeBullet) => {
             spikeBullet.destroy();
-            this.weakSpikes.create(asteroid.x, asteroid.y)
+            let weakSpike = this.weakSpikes.create(asteroid.x, asteroid.y);
+            if(asteroid.attractor){
+                asteroid.attractor.captured = weakSpike;
+            }
             asteroid.destroy();
         });
         this.physics.add.collider(this.asteroids, this.gifts);
