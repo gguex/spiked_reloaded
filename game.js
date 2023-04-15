@@ -1,9 +1,19 @@
 const constants = {
   WIDTH: 800,
   HEIGHT: 600,
+
   ANGULAR_VELOCITY: 200,
   ACCELERATION: 400,
   BOUNCE: 0.9, 
+  DRAG: 0.1,
+  BULLET_SPEED: 400,
+  SPECIAL_BULLET_SPEED: 1500,
+  FIRING_DELAY: 400, 
+  BULLET_LIFESPAN: 80,
+  AFFECTS_LIFESPAN: 2000,
+  STARTING_LIFE: 5,
+  ATTRACTOR_STRENGTH: 2,
+
   ASTEROID_SCALE: 0.7,
   PLAYER_SCALE: 1.5,
   SPIKE_SCALE: 2.5,
@@ -11,19 +21,9 @@ const constants = {
   GIFT_SCALE: 1,
   BULLET_SCALE: 1,
   HEAVY_BULLET_SCALE: 1,
-  FREEZER_BULLET_SCALE: 0.2,
+  AFFECTS_BULLET_SCALE: 0.2,
   FREEZER_SCALE: 0.5,
-  ATTRACTOR_SCALE: 0.7,
-  DRAG: 0.1,
-  BULLET_MASS: 1,
-  HEAVY_BULLET_MASS: 1,
-  BULLET_SPEED: 400,
-  HEAVY_BULLET_SPEED: 1500,
-  FIRING_DELAY: 400, 
-  BULLET_LIFESPAN: 80,
-  FREEZER_LIFESPAN: 2000,
-  STARTING_LIFE: 3,
-  ATTRACTOR_STRENGTH: 3
+  ATTRACTOR_SCALE: 0.7
 };
 
 const config = {
@@ -35,7 +35,7 @@ const config = {
 		default: 'arcade',
 		arcade: {
 			enableBody: true,
-      debug: false
+      debug: true
 		}
     },
     scene: [Space]

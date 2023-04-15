@@ -54,8 +54,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                         this.y + heavyBulletDirection.y*this.body.width/1.5
                     );
                     heavyBullet.setVelocity(
-                        heavyBulletDirection.x * constants.HEAVY_BULLET_SPEED + this.body.velocity.x, 
-                        heavyBulletDirection.y * constants.HEAVY_BULLET_SPEED + this.body.velocity.y
+                        heavyBulletDirection.x * constants.SPECIAL_BULLET_SPEED + this.body.velocity.x, 
+                        heavyBulletDirection.y * constants.SPECIAL_BULLET_SPEED + this.body.velocity.y
                     );
                     this.items.splice(this.itemsPointer - 1, 1);
                     this.itemsPointer -= 1;
@@ -68,8 +68,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                         this.y + freezerDirection.y*this.body.width/1.5
                     );
                     freezer.setVelocity(
-                        freezerDirection.x * constants.HEAVY_BULLET_SPEED + this.body.velocity.x, 
-                        freezerDirection.y * constants.HEAVY_BULLET_SPEED + this.body.velocity.y
+                        freezerDirection.x * constants.SPECIAL_BULLET_SPEED + this.body.velocity.x, 
+                        freezerDirection.y * constants.SPECIAL_BULLET_SPEED + this.body.velocity.y
                     );
                     this.items.splice(this.itemsPointer - 1, 1);
                     this.itemsPointer -= 1;
@@ -83,8 +83,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                         this.y + attractorDirection.y*this.body.width/1.5
                     );
                     attractor.setVelocity(
-                        attractorDirection.x * constants.HEAVY_BULLET_SPEED + this.body.velocity.x, 
-                        attractorDirection.y * constants.HEAVY_BULLET_SPEED + this.body.velocity.y
+                        attractorDirection.x * constants.SPECIAL_BULLET_SPEED + this.body.velocity.x, 
+                        attractorDirection.y * constants.SPECIAL_BULLET_SPEED + this.body.velocity.y
                     );
                     this.items.splice(this.itemsPointer - 1, 1);
                     this.itemsPointer -= 1;

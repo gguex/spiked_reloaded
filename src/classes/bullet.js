@@ -11,7 +11,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
         this.setCollideWorldBounds(true);
         this.setBounce(constants.BOUNCE);
         this.setDrag(constants.DRAG);
-        this.body.setMass(constants.BULLET_MASS); 
         this.lifespan = constants.BULLET_LIFESPAN;
 
     } 

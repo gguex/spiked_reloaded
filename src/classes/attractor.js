@@ -2,11 +2,11 @@ class Attractor extends Phaser.Physics.Arcade.Sprite{
 
     constructor(scene, x, y) {
         
-        super(scene, x, y, 'heavyBullet');
+        super(scene, x, y, 'attractor');
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setScale(constants.FREEZER_BULLET_SCALE);
+        this.setScale(constants.AFFECTS_BULLET_SCALE);
         this.body.setCircle(this.body.width / 2);
         this.setCollideWorldBounds(true);
         this.setBounce(constants.BOUNCE);
@@ -18,7 +18,7 @@ class Attractor extends Phaser.Physics.Arcade.Sprite{
         this.fireFrom = undefined;
         this.captured = undefined;
 
-        this.lifespan = constants.FREEZER_LIFESPAN;
+        this.lifespan = constants.AFFECTS_LIFESPAN;
 
     }
 
@@ -34,18 +34,20 @@ class Attractor extends Phaser.Physics.Arcade.Sprite{
 
     update(){
         if(this.captured){
-            if(this.fireFrom){
-                this.setPosition(this.captured.x, this.captured.y);
-                let directionX = (this.fireFrom.x - this.captured.x);
-                let directionY = (this.fireFrom.y - this.captured.y);
-                directionX *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
-                directionY *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
+            if(this.fireFrom != this.captured){
                 if(this.captured.body){
+                    this.setPosition(this.captured.x, this.captured.y);
+                    let directionX = (this.fireFrom.x - this.captured.x);
+                    let directionY = (this.fireFrom.y - this.captured.y);
+                    directionX *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
+                    directionY *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
                     this.captured.body.velocity.x += directionX;
                     this.captured.body.velocity.y += directionY;
-                }
-                this.lifespan -= 1;
-                if(this.lifespan < 0){
+                    this.lifespan -= 1;
+                    if(this.lifespan < 0){
+                        this.destroy();
+                    }
+                } else {
                     this.destroy();
                 }
             }

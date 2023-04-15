@@ -11,7 +11,6 @@ class HeavyBullet extends Phaser.Physics.Arcade.Sprite{
         this.setCollideWorldBounds(true);
         this.setBounce(constants.BOUNCE);
         this.setDrag(constants.DRAG);
-        this.body.setMass(constants.HEAVY_BULLET_MASS); 
 
     }
 

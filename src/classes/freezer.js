@@ -2,11 +2,11 @@ class Freezer extends Phaser.Physics.Arcade.Sprite{
 
     constructor(scene, x, y) {
         
-        super(scene, x, y, 'heavyBullet');
+        super(scene, x, y, 'freezer');
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setScale(constants.FREEZER_BULLET_SCALE);
+        this.setScale(constants.AFFECTS_BULLET_SCALE);
         this.body.setCircle(this.body.width / 2);
         this.setCollideWorldBounds(true);
         this.setBounce(constants.BOUNCE);
@@ -17,7 +17,7 @@ class Freezer extends Phaser.Physics.Arcade.Sprite{
 
         this.captured = undefined;
 
-        this.lifespan = constants.FREEZER_LIFESPAN;
+        this.lifespan = constants.AFFECTS_LIFESPAN;
 
     }
 
@@ -34,12 +34,16 @@ class Freezer extends Phaser.Physics.Arcade.Sprite{
 
     update(){
         if(this.captured){
-            this.setPosition(this.captured.x, this.captured.y);
-            if(this.captured.constructor.name == "Player"){
-                this.captured.thrustStop();
-            }
-            this.lifespan -= 1;
-            if(this.lifespan < 0){
+            if(this.captured.body){
+                this.setPosition(this.captured.x, this.captured.y);
+                if(this.captured.constructor.name == "Player"){
+                    this.captured.thrustStop();
+                }
+                this.lifespan -= 1;
+                if(this.lifespan < 0){
+                    this.destroy();
+                }
+            } else {
                 this.destroy();
             }
         }
