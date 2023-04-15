@@ -19,6 +19,7 @@ class Space extends Phaser.Scene {
         this.load.image('heavyBulletGift', 'src/img/blueGift.png');
         this.load.image('freezerGift', 'src/img/greenGift.png');
         this.load.image('attractorGift', 'src/img/purpleGift.png');
+        this.load.image('lifeGift', 'src/img/woodGift.png');
 
     }
 
@@ -86,9 +87,11 @@ class Space extends Phaser.Scene {
                     } else {
                         let roll3 = Math.random();
                         let giftname = 'heavyBulletGift';
-                        if (roll3 > 0.67){
+                        if (roll3 > 0.9){
+                            giftname = 'lifeGift';
+                        } else if (roll3 > 0.6){
                             giftname = 'freezerGift';
-                        } else if (roll3 > 0.33){
+                        } else if (roll3 > 0.3){
                             giftname = 'attractorGift';
                         }
                         let gift = this.gifts.create(posX, posY, giftname);
@@ -133,7 +136,12 @@ class Space extends Phaser.Scene {
             this.lifeDisplay1.setText(this.player1.life);
         });
         this.physics.add.overlap(this.player1, this.gifts, (player, gift) => {
-            player.addItem(gift.giftType);
+            if(gift.giftType == 'lifeGift'){
+                player.life += 1;
+                this.lifeDisplay1.setText(this.player2.life);
+            } else {
+                player.addItem(gift.giftType);
+            }
             gift.destroy();
         });
         this.physics.add.collider(this.player2, this.asteroids);
@@ -151,7 +159,12 @@ class Space extends Phaser.Scene {
             this.lifeDisplay2.setText(this.player2.life);
         });
         this.physics.add.overlap(this.player2, this.gifts, (player, gift) => {
-            player.addItem(gift.giftType);
+            if(gift.giftType == 'lifeGift'){
+                player.life += 1;
+                this.lifeDisplay2.setText(this.player2.life);
+            } else {
+                player.addItem(gift.giftType);
+            }
             gift.destroy();
         });
         this.physics.add.collider(this.asteroids, this.asteroids);
@@ -259,11 +272,11 @@ class Space extends Phaser.Scene {
         // Hud display player 1
         switch(this.player1.items[this.player1.itemsPointer - 1]){
             case 'heavyBulletGift':
-                this.weaponDisplay1.setScale(0.5);
+                this.weaponDisplay1.setScale(0.8);
                 this.weaponDisplay1.setTexture('heavyBullet');
                 break;
             case 'freezerGift':
-                this.weaponDisplay1.setScale(0.1);
+                this.weaponDisplay1.setScale(0.16);
                 if(this.weaponDisplay1.anims.currentAnim){
                     if(this.weaponDisplay1.anims.currentAnim.key != 'freezerAnim'){
                         this.weaponDisplay1.play('freezerAnim');
@@ -273,7 +286,7 @@ class Space extends Phaser.Scene {
                 } 
                 break;
             case 'attractorGift':
-                this.weaponDisplay1.setScale(0.1);
+                this.weaponDisplay1.setScale(0.2);
                 if(this.weaponDisplay1.anims.currentAnim){
                     if(this.weaponDisplay1.anims.currentAnim.key != 'attractorAnim'){
                         this.weaponDisplay1.play('attractorAnim');
@@ -289,11 +302,11 @@ class Space extends Phaser.Scene {
         // Hud display player 2
         switch(this.player2.items[this.player2.itemsPointer - 1]){
             case 'heavyBulletGift':
-                this.weaponDisplay2.setScale(0.5);
+                this.weaponDisplay2.setScale(0.8);
                 this.weaponDisplay2.setTexture('heavyBullet');
                 break;
             case 'freezerGift':
-                this.weaponDisplay2.setScale(0.1);
+                this.weaponDisplay2.setScale(0.16);
                 if(this.weaponDisplay2.anims.currentAnim){
                     if(this.weaponDisplay2.anims.currentAnim.key != 'freezerAnim'){
                         this.weaponDisplay2.play('freezerAnim');
@@ -303,7 +316,7 @@ class Space extends Phaser.Scene {
                 } 
                 break;
             case 'attractorGift':
-                this.weaponDisplay2.setScale(0.1);
+                this.weaponDisplay2.setScale(0.2);
                 if(this.weaponDisplay2.anims.currentAnim){
                     if(this.weaponDisplay2.anims.currentAnim.key != 'attractorAnim'){
                         this.weaponDisplay2.play('attractorAnim');

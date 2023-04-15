@@ -34,22 +34,20 @@ class Attractor extends Phaser.Physics.Arcade.Sprite{
 
     update(){
         if(this.captured){
-            if(this.fireFrom != this.captured){
-                if(this.captured.body){
-                    this.setPosition(this.captured.x, this.captured.y);
-                    let directionX = (this.fireFrom.x - this.captured.x);
-                    let directionY = (this.fireFrom.y - this.captured.y);
-                    directionX *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
-                    directionY *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
-                    this.captured.body.velocity.x += directionX;
-                    this.captured.body.velocity.y += directionY;
-                    this.lifespan -= 1;
-                    if(this.lifespan < 0){
-                        this.destroy();
-                    }
-                } else {
+            if(this.fireFrom != this.captured && this.captured.body){
+                this.setPosition(this.captured.x, this.captured.y);
+                let directionX = (this.fireFrom.x - this.captured.x);
+                let directionY = (this.fireFrom.y - this.captured.y);
+                directionX *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
+                directionY *= constants.ATTRACTOR_STRENGTH/Math.sqrt(directionX**2 + directionY**2);
+                this.captured.body.velocity.x += directionX;
+                this.captured.body.velocity.y += directionY;
+                this.lifespan -= 1;
+                if(this.lifespan < 0){
                     this.destroy();
                 }
+            } else {
+                this.destroy();
             }
         }
     }
