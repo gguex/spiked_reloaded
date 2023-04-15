@@ -127,6 +127,9 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.player1, this.attractors, (player, attractor) => {
             attractor.capture(player);
         });
+        this.physics.add.overlap(this.player1, this.spikeBullets, (player, spikeBullet) => {
+            spikeBullet.destroy();
+        });
         this.physics.add.collider(this.player1, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
             player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
@@ -154,6 +157,9 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.player2, this.attractors, (player, attractor) => {
             attractor.capture(player);
+        });
+        this.physics.add.overlap(this.player2, this.spikeBullets, (player, spikeBullet) => {
+            spikeBullet.destroy();
         });
         this.physics.add.collider(this.player2, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
@@ -183,6 +189,11 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.asteroids, this.attractors, (asteroid, attractor) => {
             attractor.capture(asteroid);
         });
+        this.physics.add.overlap(this.asteroids, this.spikeBullets, (asteroid, spikeBullet) => {
+            spikeBullet.destroy();
+            this.weakSpikes.create(asteroid.x, asteroid.y)
+            asteroid.destroy();
+        });
         this.physics.add.collider(this.asteroids, this.gifts);
         this.physics.add.collider(this.asteroids, this.spike, (asteroid, spike) => {
             this.explosions.create(asteroid.x, asteroid.y);
@@ -202,6 +213,9 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.spike, this.attractors, (spike, attractor) => {
             attractor.capture(spike);
+        });
+        this.physics.add.overlap(this.spike, this.spikeBullets, (spike, spikeBullet) => {
+            spikeBullet.destroy();
         });
         this.physics.add.overlap(this.spike, this.gifts, (spike, gift) => {
             this.explosions.create(gift.x, gift.y);
@@ -226,6 +240,9 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.gifts, this.attractors, (gift, attractor) => {
             attractor.capture(gift);
         });
+        this.physics.add.overlap(this.gifts, this.spikeBullets, (gift, spikeBullet) => {
+            spikeBullet.destroy();
+        });
         this.physics.add.overlap(this.gifts, this.weakSpikes, (gift, weakSpike) => {
             this.explosions.create(gift.x, gift.y);
             gift.destroy();
@@ -241,6 +258,9 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.weakSpikes, this.attractors, (weakSpike, attractor) => {
             attractor.capture(weakSpike);
         });
+        this.physics.add.overlap(this.weakSpikes, this.spikeBullets, (weakSpike, spikeBullet) => {
+            spikeBullet.destroy();
+        });
         this.physics.add.collider(this.heavyBullets, this.heavyBullets);
         this.physics.add.overlap(this.heavyBullets, this.freezers, (heavyBullet, freezer) => {
             freezer.capture(heavyBullet);
@@ -248,7 +268,11 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.heavyBullets, this.attractors, (heavyBullet, attractor) => {
             attractor.capture(heavyBullet);
         });
+        this.physics.add.overlap(this.heavyBullets, this.spikeBullets, (heavyBullet, spikeBullet) => {
+            spikeBullet.destroy();
+        });
         this.physics.add.collider(this.heavyBullets, this.bullets);
+        this.physics.add.collider(this.weakSpikes, this.weakSpikes);
        
 
     }

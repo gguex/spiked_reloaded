@@ -89,6 +89,20 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                     this.items.splice(this.itemsPointer - 1, 1);
                     this.itemsPointer -= 1;
                     break;
+                case 'spikeGift':
+                    let spikeBullet = scene.spikeBullets.create();
+                    let spikeBulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
+                    spikeBullet.setPosition (
+                        this.x + spikeBulletDirection.x*this.body.width/1.5, 
+                        this.y + spikeBulletDirection.y*this.body.width/1.5
+                    );
+                    spikeBullet.setVelocity(
+                        spikeBulletDirection.x * constants.SPECIAL_BULLET_SPEED + this.body.velocity.x, 
+                        spikeBulletDirection.y * constants.SPECIAL_BULLET_SPEED + this.body.velocity.y
+                    );
+                    this.items.splice(this.itemsPointer - 1, 1);
+                    this.itemsPointer -= 1;
+                    break;
                 default:
                     let bullet = scene.bullets.create();
                     let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
