@@ -13,20 +13,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
         this.setDrag(constants.DRAG);
         this.lifespan = constants.BULLET_LIFESPAN;
 
-    } 
-
-    fireFrom(scene, player) {
-        this.rotation = player.rotation; 
-        let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
-        this.body.reset(player.x + bulletDirection.x*player.body.width/1.5, player.y + bulletDirection.y*player.body.width/1.5 );
-        this.setActive(true);
-        this.setVisible(true);
-        this.setVelocity(
-            bulletDirection.x * constants.BULLET_SPEED + player.body.velocity.x, 
-            bulletDirection.y * constants.BULLET_SPEED + player.body.velocity.y
-        );
     }
- 
+    
     update(time, delta){
         this.lifespan -= 1;
         if(this.lifespan < 0){

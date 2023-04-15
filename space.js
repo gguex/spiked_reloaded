@@ -367,6 +367,7 @@ class Space extends Phaser.Scene {
                 this.weaponDisplay1.setScale(0.5);
                 this.weaponDisplay1.setTexture('hud1');
         }
+        
         // Hud display player 2
         switch(this.player2.items[this.player2.itemsPointer - 1]){
             case 'heavyBulletGift':

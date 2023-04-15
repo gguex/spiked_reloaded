@@ -11,13 +11,10 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.setBounce(constants.BOUNCE);
         this.setDrag(constants.DRAG);
 
-        this.lastFired = 0;
-
+        this.lastFire = 0;
+        this.lastSwitch = 0;
         this.items = [];
         this.itemsPointer = 0;
-
-        this.lastSwitch = 0;
-
         this.life = constants.STARTING_LIFE;
         
     }
@@ -41,9 +38,9 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
     fire(scene){
         
-        if(scene.time.now > this.lastFired + constants.FIRING_DELAY){
+        if(scene.time.now > this.lastFire + constants.FIRING_DELAY){
 
-            this.lastFired = scene.time.now;
+            this.lastFire = scene.time.now;
 
             switch(this.items[this .itemsPointer - 1]){
                 case 'heavyBulletGift':
