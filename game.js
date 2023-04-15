@@ -23,7 +23,10 @@ const constants = {
   HEAVY_BULLET_SCALE: 1,
   AFFECTS_BULLET_SCALE: 0.2,
   FREEZER_SCALE: 0.5,
-  ATTRACTOR_SCALE: 0.7
+  ATTRACTOR_SCALE: 0.7,
+  SPIKE_BULLET_SCALE: 1.2,
+  WEAK_SPIKE_SCALE: 2,
+
 };
 
 const config = {
@@ -35,7 +38,7 @@ const config = {
 		default: 'arcade',
 		arcade: {
 			enableBody: true,
-      debug: false
+      debug: true
 		}
     },
     scene: [Space]

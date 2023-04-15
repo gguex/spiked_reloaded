@@ -20,6 +20,8 @@ class Space extends Phaser.Scene {
         this.load.image('freezerGift', 'src/img/greenGift.png');
         this.load.image('attractorGift', 'src/img/purpleGift.png');
         this.load.image('lifeGift', 'src/img/woodGift.png');
+        this.load.image('spikeGift', 'src/img/redGift.png');
+        this.load.spritesheet('weakSpike', 'src/img/weakSpike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
 
     }
 
@@ -29,21 +31,12 @@ class Space extends Phaser.Scene {
         let asteroidFrames = this.anims.generateFrameNames('asteroid', {
             start: 0, end: 29, prefix: 'asteroid-', suffix: '.png'
         });
-        this.anims.create({key: 'asteroidAnim', frames: asteroidFrames,
-            frameRate: 15, repeat: -1
-        });
-        this.anims.create({key: 'spikeAnim', frames: 'spike',
-            frameRate: 15, repeat: -1
-        });
-        this.anims.create({key: 'explosionAnim', frames: 'explosion',
-            frameRate: 15
-        });
-        this.anims.create({key: 'freezerAnim', frames: 'freezer',
-            frameRate: 30, repeat: -1
-        });
-        this.anims.create({key: 'attractorAnim', frames: 'attractor',
-            frameRate: 30, repeat: -1
-        });
+        this.anims.create({key: 'asteroidAnim', frames: asteroidFrames, frameRate: 15, repeat: -1});
+        this.anims.create({key: 'spikeAnim', frames: 'spike', frameRate: 15, repeat: -1});
+        this.anims.create({key: 'explosionAnim', frames: 'explosion', frameRate: 15});
+        this.anims.create({key: 'freezerAnim', frames: 'freezer', frameRate: 30, repeat: -1});
+        this.anims.create({key: 'attractorAnim', frames: 'attractor', frameRate: 30, repeat: -1});
+        this.anims.create({key: 'weakSpikeAnim', frames: 'weakSpike', frameRate: 15, repeat: -1});
         
 
         // Game objects
@@ -56,7 +49,9 @@ class Space extends Phaser.Scene {
         this.heavyBullets = this.add.group({classType: HeavyBullet});
         this.freezers = this.add.group({classType: Freezer, runChildUpdate: true});
         this.attractors = this.add.group({classType: Attractor, runChildUpdate: true});
-        this.explosions = this.add.group({classType: Explosion, runChildUpdate: true})
+        this.spikeBullets = this.add.group({classType: SpikeBullet});
+        this.weakSpikes = this.add.group({classType: WeakSpike, runChildUpdate: true});
+        this.explosions = this.add.group({classType: Explosion, runChildUpdate: true});
 
         // Hud
         this.hud1 = this.add.image(20, 20, 'hud1').setScale(0.5);
@@ -73,7 +68,7 @@ class Space extends Phaser.Scene {
         // Objects creation
         function objectGen(){
             let roll = Math.random()
-            if(roll > 0.9 ){
+            if(roll > 0.9){
                 let posX = Math.random() * constants.WIDTH;
                 let posY = Math.random() * constants.HEIGHT;
                 let speedX = Math.random() * 300;
@@ -81,7 +76,7 @@ class Space extends Phaser.Scene {
                 let explosion = this.explosions.create(posX, posY);
                 explosion.on('animationcomplete', () => {
                     let roll2 = Math.random();
-                    if(roll2 > 0.5){
+                    if(roll2 > 0.6){
                         let asteroid = this.asteroids.create(posX, posY);
                         asteroid.setVelocity(speedX, speedY);
                     } else {
@@ -89,9 +84,11 @@ class Space extends Phaser.Scene {
                         let giftname = 'heavyBulletGift';
                         if (roll3 > 0.9){
                             giftname = 'lifeGift';
-                        } else if (roll3 > 0.6){
+                        } else if (roll3 > 0.675){
+                            giftname = 'spikeGift';
+                        } else if (roll3 > 0.45){
                             giftname = 'freezerGift';
-                        } else if (roll3 > 0.3){
+                        } else if (roll3 > 0.225){
                             giftname = 'attractorGift';
                         }
                         let gift = this.gifts.create(posX, posY, giftname);
@@ -135,6 +132,11 @@ class Space extends Phaser.Scene {
             player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
             this.lifeDisplay1.setText(this.player1.life);
         });
+        this.physics.add.collider(this.player1, this.weakSpikes, (player, weakSpike) => {
+            this.explosions.create(player.x, player.y);
+            player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
+            this.lifeDisplay1.setText(this.player1.life);
+        });
         this.physics.add.overlap(this.player1, this.gifts, (player, gift) => {
             if(gift.giftType == 'lifeGift'){
                 player.life += 1;
@@ -154,6 +156,11 @@ class Space extends Phaser.Scene {
             attractor.capture(player);
         });
         this.physics.add.collider(this.player2, this.spike, (player, spike) => {
+            this.explosions.create(player.x, player.y);
+            player.kill(3*constants.WIDTH/4, 3*constants.HEIGHT/4, 180);
+            this.lifeDisplay2.setText(this.player2.life);
+        });
+        this.physics.add.collider(this.player2, this.weakSpikes, (player, weakSpike) => {
             this.explosions.create(player.x, player.y);
             player.kill(3*constants.WIDTH/4, 3*constants.HEIGHT/4, 180);
             this.lifeDisplay2.setText(this.player2.life);
@@ -181,6 +188,10 @@ class Space extends Phaser.Scene {
             this.explosions.create(asteroid.x, asteroid.y);
             asteroid.destroy();
         });
+        this.physics.add.collider(this.asteroids, this.weakSpikes, (asteroid, weakSpike) => {
+            this.explosions.create(asteroid.x, asteroid.y);
+            asteroid.destroy();
+        });
         this.physics.add.collider(this.spike, this.bullets);
         this.physics.add.collider(this.spike, this.heavyBullets, (spike, heavyBullet) => {
             this.explosions.create(heavyBullet.x, heavyBullet.y);
@@ -196,6 +207,10 @@ class Space extends Phaser.Scene {
             this.explosions.create(gift.x, gift.y);
             gift.destroy();
         });
+        this.physics.add.overlap(this.spike, this.weakSpikes, (spike, weakSpike) => {
+            this.explosions.create(weakSpike.x, weakSpike.y);
+            weakSpike.destroy();
+        });
         this.physics.add.collider(this.gifts, this.gifts);
         this.physics.add.overlap(this.gifts, this.bullets, (gift, bullet) => {
             this.explosions.create(gift.x, gift.y);
@@ -210,6 +225,21 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.gifts, this.attractors, (gift, attractor) => {
             attractor.capture(gift);
+        });
+        this.physics.add.overlap(this.gifts, this.weakSpikes, (gift, weakSpike) => {
+            this.explosions.create(gift.x, gift.y);
+            gift.destroy();
+        });
+        this.physics.add.collider(this.weakSpikes, this.bullets);
+        this.physics.add.collider(this.weakSpikes, this.heavyBullets, (weakSpike, heavyBullet) => {
+            this.explosions.create(heavyBullet.x, heavyBullet.y);
+            heavyBullet.destroy();
+        });
+        this.physics.add.overlap(this.weakSpikes, this.freezers, (weakSpike, freezer) => {
+            freezer.capture(weakSpike);
+        });
+        this.physics.add.overlap(this.weakSpikes, this.attractors, (weakSpike, attractor) => {
+            attractor.capture(weakSpike);
         });
         this.physics.add.collider(this.heavyBullets, this.heavyBullets);
         this.physics.add.overlap(this.heavyBullets, this.freezers, (heavyBullet, freezer) => {
@@ -295,6 +325,16 @@ class Space extends Phaser.Scene {
                     this.weaponDisplay1.play('attractorAnim');
                 } 
                 break;
+            case 'spikeGift':
+                this.weaponDisplay1.setScale(1);
+                if(this.weaponDisplay1.anims.currentAnim){
+                    if(this.weaponDisplay1.anims.currentAnim.key != 'weakSpikeAnim'){
+                        this.weaponDisplay1.play('weakSpikeAnim');
+                    }
+                } else {
+                    this.weaponDisplay1.play('weakSpikeAnim');
+                } 
+                break;
             default:
                 this.weaponDisplay1.setScale(0.5);
                 this.weaponDisplay1.setTexture('hud1');
@@ -323,6 +363,16 @@ class Space extends Phaser.Scene {
                     }
                 } else {
                     this.weaponDisplay2.play('attractorAnim');
+                } 
+                break;
+            case 'spikeGift':
+                this.weaponDisplay2.setScale(1);
+                if(this.weaponDisplay2.anims.currentAnim){
+                    if(this.weaponDisplay2.anims.currentAnim.key != 'weakSpikeAnim'){
+                        this.weaponDisplay2.play('weakSpikeAnim');
+                    }
+                } else {
+                    this.weaponDisplay2.play('weakSpikeAnim');
                 } 
                 break;
             default:
