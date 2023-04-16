@@ -101,6 +101,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                     this.itemsPointer -= 1;
                     break;
                 default:
+                    scene.bulletFireSound.play();
                     let bullet = scene.bullets.create();
                     let bulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
                     bullet.setPosition(

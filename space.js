@@ -1,28 +1,34 @@
 class Space extends Phaser.Scene {
+
     constructor() {
         super({ key: 'Space' })
     }
 
     preload() {
 
-        this.load.image('player1', 'src/img/player1.png');
-        this.load.image('player2', 'src/img/player2.png');
-        this.load.image('bullet', 'src/img/bullet.png');
-        this.load.atlas('asteroid', 'src/img/asteroid.png', 'src/img/asteroid.json');
-        this.load.spritesheet('spike', 'src/img/spike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
-        this.load.spritesheet('explosion', 'src/img/explosion.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
-        this.load.image('hud1', 'src/img/hud1.png');
-        this.load.image('hud2', 'src/img/hud2.png');
-        this.load.image('heavyBullet', 'src/img/heavyBullet.png');
-        this.load.spritesheet('attractor', 'src/img/attractor.png', {frameWidth: 192, frameHeight: 192, endFrame: 31});
-        this.load.spritesheet('freezer', 'src/img/freezer.png', {frameWidth: 192, frameHeight: 192, endFrame: 31});
-        this.load.image('heavyBulletGift', 'src/img/blueGift.png');
-        this.load.image('freezerGift', 'src/img/greenGift.png');
-        this.load.image('attractorGift', 'src/img/purpleGift.png');
-        this.load.image('lifeGift', 'src/img/woodGift.png');
-        this.load.image('spikeGift', 'src/img/redGift.png');
-        this.load.spritesheet('weakSpike', 'src/img/weakSpike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
+        this.load.image('player1', 'src/images/player1.png');
+        this.load.image('player2', 'src/images/player2.png');
+        this.load.image('bullet', 'src/images/bullet.png');
+        this.load.atlas('asteroid', 'src/images/asteroid.png', 'src/images/asteroid.json');
+        this.load.spritesheet('spike', 'src/images/spike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
+        this.load.spritesheet('explosion', 'src/images/explosion.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
+        this.load.image('hud1', 'src/images/hud1.png');
+        this.load.image('hud2', 'src/images/hud2.png');
+        this.load.image('heavyBullet', 'src/images/heavyBullet.png');
+        this.load.spritesheet('attractor', 'src/images/attractor.png', {frameWidth: 192, frameHeight: 192, endFrame: 31});
+        this.load.spritesheet('freezer', 'src/images/freezer.png', {frameWidth: 192, frameHeight: 192, endFrame: 31});
+        this.load.image('heavyBulletGift', 'src/images/blueGift.png');
+        this.load.image('freezerGift', 'src/images/greenGift.png');
+        this.load.image('attractorGift', 'src/images/purpleGift.png');
+        this.load.image('lifeGift', 'src/images/woodGift.png');
+        this.load.image('spikeGift', 'src/images/redGift.png');
+        this.load.spritesheet('weakSpike', 'src/images/weakSpike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
 
+        this.load.audio('appearanceSound', 'src/sounds/muffledExplosion.wav');
+        this.load.audio('destroySound', 'src/sounds/bigExplosion.mp3');
+        this.load.audio('bulletFireSound', 'src/sounds/bulletFire.ogg');
+        this.load.audio('lifeSound', 'src/sounds/life.ogg');
+        this.load.audio('metalReboundSound', 'src/sounds/metalRebound.wav');
     }
 
     create() {
@@ -37,7 +43,13 @@ class Space extends Phaser.Scene {
         this.anims.create({key: 'freezerAnim', frames: 'freezer', frameRate: 30, repeat: -1});
         this.anims.create({key: 'attractorAnim', frames: 'attractor', frameRate: 30, repeat: -1});
         this.anims.create({key: 'weakSpikeAnim', frames: 'weakSpike', frameRate: 15, repeat: -1});
-        
+
+        // Sounds
+        this.appearanceSound = this.sound.add('appearanceSound');
+        this.destroySound = this.sound.add('destroySound');
+        this.bulletFireSound = this.sound.add('bulletFireSound');
+        this.lifeSound = this.sound.add('lifeSound');
+        this.metalReboundSound = this.sound.add('metalReboundSound');
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -74,6 +86,7 @@ class Space extends Phaser.Scene {
                 let speedX = Math.random() * 300;
                 let speedY = Math.random() * 300;
                 let explosion = this.explosions.create(posX, posY);
+                this.appearanceSound.play();
                 explosion.on('animationcomplete', () => {
                     let roll2 = Math.random();
                     if(roll2 > 0.6){
@@ -82,7 +95,7 @@ class Space extends Phaser.Scene {
                     } else {
                         let roll3 = Math.random();
                         let giftname = 'heavyBulletGift';
-                        if (roll3 > 0.9){
+                        if (roll3 > (1 - constants.APPEARING_CHANCES)){
                             giftname = 'lifeGift';
                         } else if (roll3 > 0.675){
                             giftname = 'spikeGift';
@@ -117,10 +130,10 @@ class Space extends Phaser.Scene {
         this.switchP2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 
         // Colliders
-        this.physics.add.collider(this.player1, this.player2)
-        this.physics.add.collider(this.player1, this.asteroids);
-        this.physics.add.collider(this.player1, this.bullets);
-        this.physics.add.collider(this.player1, this.heavyBullets);
+        this.physics.add.collider(this.player1, this.player2, () => this.metalReboundSound.play())
+        this.physics.add.collider(this.player1, this.asteroids, () => this.metalReboundSound.play());
+        this.physics.add.collider(this.player1, this.bullets, () => this.metalReboundSound.play());
+        this.physics.add.collider(this.player1, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.player1, this.freezers, (player, freezer) => {
             freezer.capture(player);
         });
@@ -132,11 +145,13 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.collider(this.player1, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
+            this.destroySound.play();
             player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
             this.lifeDisplay1.setText(this.player1.life);
         });
         this.physics.add.collider(this.player1, this.weakSpikes, (player, weakSpike) => {
             this.explosions.create(player.x, player.y);
+            this.destroySound.play();
             player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
             this.lifeDisplay1.setText(this.player1.life);
         });
@@ -144,14 +159,15 @@ class Space extends Phaser.Scene {
             if(gift.giftType == 'lifeGift'){
                 player.life += 1;
                 this.lifeDisplay1.setText(this.player2.life);
+                this.lifeSound.play();
             } else {
                 player.addItem(gift.giftType);
             }
             gift.destroy();
         });
-        this.physics.add.collider(this.player2, this.asteroids);
-        this.physics.add.collider(this.player2, this.bullets);
-        this.physics.add.collider(this.player2, this.heavyBullets);
+        this.physics.add.collider(this.player2, this.asteroids, () => this.metalReboundSound.play());
+        this.physics.add.collider(this.player2, this.bullets, () => this.metalReboundSound.play());
+        this.physics.add.collider(this.player2, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.player2, this.freezers, (player, freezer) => {
             freezer.capture(player);
         });
@@ -163,11 +179,13 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.collider(this.player2, this.spike, (player, spike) => {
             this.explosions.create(player.x, player.y);
+            this.destroySound.play();
             player.kill(3*constants.WIDTH/4, 3*constants.HEIGHT/4, 180);
             this.lifeDisplay2.setText(this.player2.life);
         });
         this.physics.add.collider(this.player2, this.weakSpikes, (player, weakSpike) => {
             this.explosions.create(player.x, player.y);
+            this.destroySound.play();
             player.kill(3*constants.WIDTH/4, 3*constants.HEIGHT/4, 180);
             this.lifeDisplay2.setText(this.player2.life);
         });
@@ -175,6 +193,7 @@ class Space extends Phaser.Scene {
             if(gift.giftType == 'lifeGift'){
                 player.life += 1;
                 this.lifeDisplay2.setText(this.player2.life);
+                this.lifeSound.play();
             } else {
                 player.addItem(gift.giftType);
             }
@@ -201,15 +220,18 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(this.asteroids, this.gifts);
         this.physics.add.collider(this.asteroids, this.spike, (asteroid, spike) => {
             this.explosions.create(asteroid.x, asteroid.y);
+            this.destroySound.play();
             asteroid.destroy();
         });
         this.physics.add.collider(this.asteroids, this.weakSpikes, (asteroid, weakSpike) => {
             this.explosions.create(asteroid.x, asteroid.y);
+            this.destroySound.play();
             asteroid.destroy();
         });
-        this.physics.add.collider(this.spike, this.bullets);
+        this.physics.add.collider(this.spike, this.bullets, () => this.metalReboundSound.play());
         this.physics.add.collider(this.spike, this.heavyBullets, (spike, heavyBullet) => {
             this.explosions.create(heavyBullet.x, heavyBullet.y);
+            this.destroySound.play();
             heavyBullet.destroy();
         });
         this.physics.add.overlap(this.spike, this.freezers, (spike, freezer) => {
@@ -223,19 +245,23 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.spike, this.gifts, (spike, gift) => {
             this.explosions.create(gift.x, gift.y);
+            this.destroySound.play();
             gift.destroy();
         });
         this.physics.add.overlap(this.spike, this.weakSpikes, (spike, weakSpike) => {
             this.explosions.create(weakSpike.x, weakSpike.y);
+            this.destroySound.play();
             weakSpike.destroy();
         });
         this.physics.add.collider(this.gifts, this.gifts);
         this.physics.add.overlap(this.gifts, this.bullets, (gift, bullet) => {
             this.explosions.create(gift.x, gift.y);
+            this.destroySound.play();
             gift.destroy(); 
         });
         this.physics.add.overlap(this.gifts, this.heavyBullets, (gift, heavyBullet) => {
             this.explosions.create(gift.x, gift.y);
+            this.destroySound.play();
             gift.destroy(); 
         });
         this.physics.add.overlap(this.gifts, this.freezers, (gift, freezer) => {
@@ -249,13 +275,15 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.gifts, this.weakSpikes, (gift, weakSpike) => {
             this.explosions.create(gift.x, gift.y);
+            this.destroySound.play();
             gift.destroy();
         });
-        this.physics.add.collider(this.weakSpikes, this.bullets);
+        this.physics.add.collider(this.weakSpikes, this.bullets, () => this.metalReboundSound.play());
         this.physics.add.collider(this.weakSpikes, this.heavyBullets, (weakSpike, heavyBullet) => {
             this.explosions.create(heavyBullet.x, heavyBullet.y);
+            this.destroySound.play();
             heavyBullet.destroy();
-        });
+        }); 
         this.physics.add.overlap(this.weakSpikes, this.freezers, (weakSpike, freezer) => {
             freezer.capture(weakSpike);
         });
@@ -265,7 +293,7 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.weakSpikes, this.spikeBullets, (weakSpike, spikeBullet) => {
             spikeBullet.destroy();
         });
-        this.physics.add.collider(this.heavyBullets, this.heavyBullets);
+        this.physics.add.collider(this.heavyBullets, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.heavyBullets, this.freezers, (heavyBullet, freezer) => {
             freezer.capture(heavyBullet);
         });
@@ -275,10 +303,9 @@ class Space extends Phaser.Scene {
         this.physics.add.overlap(this.heavyBullets, this.spikeBullets, (heavyBullet, spikeBullet) => {
             spikeBullet.destroy();
         });
-        this.physics.add.collider(this.heavyBullets, this.bullets);
-        this.physics.add.collider(this.weakSpikes, this.weakSpikes);
+        this.physics.add.collider(this.heavyBullets, this.bullets, () => this.metalReboundSound.play());
+        this.physics.add.collider(this.weakSpikes, this.weakSpikes, () => this.metalReboundSound.play());
        
-
     }
 
     update() { 
@@ -367,7 +394,7 @@ class Space extends Phaser.Scene {
                 this.weaponDisplay1.setScale(0.5);
                 this.weaponDisplay1.setTexture('hud1');
         }
-        
+
         // Hud display player 2
         switch(this.player2.items[this.player2.itemsPointer - 1]){
             case 'heavyBulletGift':
@@ -408,9 +435,7 @@ class Space extends Phaser.Scene {
                 this.weaponDisplay2.setScale(0.5);
                 this.weaponDisplay2.setTexture('hud2');
         }
-        
-	}
-    
 
+	}
 
 }
