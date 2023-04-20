@@ -22,8 +22,9 @@ class Attractor extends Phaser.Physics.Arcade.Sprite{
 
     }
 
-    capture(object){
+    capture(object, sound){
         if(this.captured){} else {
+            sound.play();
             this.captured = object;
             this.setVelocity(this.captured.velocity);
             this.setPosition(this.captured.x, this.captured.y);

@@ -32,6 +32,8 @@ class Space extends Phaser.Scene {
         this.load.audio('metalReboundSound', 'src/sounds/metalRebound.wav');
         this.load.audio('specialFireSound', 'src/sounds/specialFire.wav');
         this.load.audio('getObjectSound', 'src/sounds/getObject.ogg');
+        this.load.audio('freezeSound', 'src/sounds/freeze.ogg');
+        this.load.audio('attractSound', 'src/sounds/attract.ogg');
     }
 
     create() {
@@ -56,6 +58,8 @@ class Space extends Phaser.Scene {
         this.metalReboundSound = this.sound.add('metalReboundSound');
         this.specialFireSound = this.sound.add('specialFireSound');
         this.getObjectSound = this.sound.add('getObjectSound');
+        this.freezeSound = this.sound.add('freezeSound');
+        this.attractSound = this.sound.add('attractSound');
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -142,10 +146,10 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(this.player1, this.bullets, () => this.metalReboundSound.play());
         this.physics.add.collider(this.player1, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.player1, this.freezers, (player, freezer) => {
-            freezer.capture(player);
+            freezer.capture(player, this.freezeSound);
         });
         this.physics.add.overlap(this.player1, this.attractors, (player, attractor) => {
-            attractor.capture(player);
+            attractor.capture(player, this.attractSound);
         });
         this.physics.add.overlap(this.player1, this.spikeBullets, (player, spikeBullet) => {
             spikeBullet.destroy();
@@ -176,10 +180,10 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(this.player2, this.bullets, () => this.metalReboundSound.play());
         this.physics.add.collider(this.player2, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.player2, this.freezers, (player, freezer) => {
-            freezer.capture(player);
+            freezer.capture(player, this.freezeSound);
         });
         this.physics.add.overlap(this.player2, this.attractors, (player, attractor) => {
-            attractor.capture(player);
+            attractor.capture(player, this.attractSound);
         });
         this.physics.add.overlap(this.player2, this.spikeBullets, (player, spikeBullet) => {
             spikeBullet.destroy();
@@ -211,10 +215,10 @@ class Space extends Phaser.Scene {
         this.physics.add.collider(this.asteroids, this.bullets,  () => this.metalReboundSound.play());
         this.physics.add.collider(this.asteroids, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.asteroids, this.freezers, (asteroid, freezer) => {
-            freezer.capture(asteroid);
+            freezer.capture(asteroid, this.freezeSound);
         });
         this.physics.add.overlap(this.asteroids, this.attractors, (asteroid, attractor) => {
-            attractor.capture(asteroid);
+            attractor.capture(asteroid, this.attractSound);
             asteroid.attractor = attractor;
         });
         this.physics.add.overlap(this.asteroids, this.spikeBullets, (asteroid, spikeBullet) => {
@@ -243,10 +247,10 @@ class Space extends Phaser.Scene {
             heavyBullet.destroy();
         });
         this.physics.add.overlap(this.spike, this.freezers, (spike, freezer) => {
-            freezer.capture(spike);
+            freezer.capture(spike, this.freezeSound);
         });
         this.physics.add.overlap(this.spike, this.attractors, (spike, attractor) => {
-            attractor.capture(spike);
+            attractor.capture(spike, this.attractSound);
         });
         this.physics.add.overlap(this.spike, this.spikeBullets, (spike, spikeBullet) => {
             spikeBullet.destroy();
@@ -273,10 +277,10 @@ class Space extends Phaser.Scene {
             gift.destroy(); 
         });
         this.physics.add.overlap(this.gifts, this.freezers, (gift, freezer) => {
-            freezer.capture(gift);
+            freezer.capture(gift, this.freezeSound);
         });
         this.physics.add.overlap(this.gifts, this.attractors, (gift, attractor) => {
-            attractor.capture(gift);
+            attractor.capture(gift, this.attractSound);
         });
         this.physics.add.overlap(this.gifts, this.spikeBullets, (gift, spikeBullet) => {
             spikeBullet.destroy();
@@ -293,20 +297,20 @@ class Space extends Phaser.Scene {
             heavyBullet.destroy();
         }); 
         this.physics.add.overlap(this.weakSpikes, this.freezers, (weakSpike, freezer) => {
-            freezer.capture(weakSpike);
+            freezer.capture(weakSpike, this.freezeSound);
         });
         this.physics.add.overlap(this.weakSpikes, this.attractors, (weakSpike, attractor) => {
-            attractor.capture(weakSpike);
+            attractor.capture(weakSpike, this.attractSound);
         });
         this.physics.add.overlap(this.weakSpikes, this.spikeBullets, (weakSpike, spikeBullet) => {
             spikeBullet.destroy();
         });
         this.physics.add.collider(this.heavyBullets, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.heavyBullets, this.freezers, (heavyBullet, freezer) => {
-            freezer.capture(heavyBullet);
+            freezer.capture(heavyBullet, this.freezeSound);
         });
         this.physics.add.overlap(this.heavyBullets, this.attractors, (heavyBullet, attractor) => {
-            attractor.capture(heavyBullet);
+            attractor.capture(heavyBullet, this.attractSound);
         });
         this.physics.add.overlap(this.heavyBullets, this.spikeBullets, (heavyBullet, spikeBullet) => {
             spikeBullet.destroy();

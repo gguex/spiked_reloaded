@@ -21,8 +21,9 @@ class Freezer extends Phaser.Physics.Arcade.Sprite{
 
     }
 
-    capture(object){
+    capture(object, sound){
         if(this.captured){} else {
+            sound.play();
             this.captured = object;
             this.captured.setVelocity(0);
             this.setVelocity(0);
