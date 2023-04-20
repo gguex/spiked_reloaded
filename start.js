@@ -25,6 +25,8 @@ class Start extends Phaser.Scene {
 
         this.load.bitmapFont('ice', 'src/bitmapTexts/iceicebaby.png', 'src/bitmapTexts/iceicebaby.xml');
 
+        this.load.audio('menuMusic', 'src/sounds/fato_shadow_-_stardust_protector.mp3');
+
     }
 
     create() {
@@ -41,12 +43,19 @@ class Start extends Phaser.Scene {
         this.anims.create({key: 'attractorAnimStart', frames: 'attractor', frameRate: 30, repeat: -1});
         this.anims.create({key: 'weakSpikeAnimStart', frames: 'weakSpike', frameRate: 15, repeat: -1});
 
+        // Music
+        this.menuMusic = this.sound.add('menuMusic');
+        this.menuMusic.play();
+
         // Title
         this.titleText = this.add.bitmapText(constants.WIDTH/2, constants.HEIGHT/10, 'ice', "SPIKED RELOADED", 64).setOrigin(0.5, 0.5);
 
         // Start Text
         this.startText = this.add.text(constants.WIDTH/2, 7.4*constants.HEIGHT/8, "Click to start the game",
             {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16, align: 'center'}).setOrigin(0.5, 0.5);
+        this.tweens.addCounter({from: 0.3, to: 1, duration: 1000, yoyo: true, loop: -1,
+            onUpdate: (tween) => {this.startText.setAlpha(tween.getValue());}
+        });
 
         // Player 1
         this.add.image(constants.WIDTH/5, 4*constants.HEIGHT/16, 'player1').setScale(constants.PLAYER_SCALE).setAngle(-90);
@@ -62,13 +71,13 @@ class Start extends Phaser.Scene {
         this.spikeImg = this.add.sprite(2*constants.WIDTH/6, 7*constants.HEIGHT/16, 'spike').setScale(constants.SPIKE_SCALE);
         this.spikeImg.play('spikeAnimStart');
         this.add.text(2*constants.WIDTH/6, 7*constants.HEIGHT/16 + 50, 
-                      "The spike, it kills you", {fill: '#FFFFFF', fontSize: 12}).setOrigin(0.5, 0.5);
+                      "The Spike, it kills you", {fill: '#FFFFFF', fontSize: 12}).setOrigin(0.5, 0.5);
                       
         // Asteroids
         this.asteroidImg = this.add.sprite(4*constants.WIDTH/6, 7*constants.HEIGHT/16, 'spike').setScale(constants.ASTEROID_SCALE);
         this.asteroidImg.play('asteroidAnimStart');
         this.add.text(4*constants.WIDTH/6, 7*constants.HEIGHT/16 + 50, 
-                      "Asteroids, annoyances", {fill: '#FFFFFF', fontSize: 12}).setOrigin(0.5, 0.5);
+                      "Asteroid, annoyance", {fill: '#FFFFFF', fontSize: 12}).setOrigin(0.5, 0.5);
 
         // Gift1
         this.add.sprite(3*constants.WIDTH/12 - 25, 10*constants.HEIGHT/16, 'heavyBulletGift').setScale(constants.GIFT_SCALE);
@@ -105,6 +114,7 @@ class Start extends Phaser.Scene {
 
         // To start
         this.input.on('pointerdown', () => {
+            this.menuMusic.stop();
 			this.scene.stop('Start');
 			this.scene.start('Space');
 		});

@@ -37,6 +37,7 @@ class Space extends Phaser.Scene {
         this.load.audio('freezeSound', 'src/sounds/freeze.ogg');
         this.load.audio('attractSound', 'src/sounds/attract.ogg');
         this.load.audio('newSpikeSound', 'src/sounds/newSpike.ogg');
+        this.load.audio('winSound', 'src/sounds/win.mp3');
     }
 
     create() {
@@ -64,6 +65,7 @@ class Space extends Phaser.Scene {
         this.freezeSound = this.sound.add('freezeSound');
         this.attractSound = this.sound.add('attractSound');
         this.newSpikeSound = this.sound.add('newSpikeSound');
+        this.winSound = this.sound.add('winSound');
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -165,12 +167,17 @@ class Space extends Phaser.Scene {
             this.lifeDisplay1.setText(this.player1.life);
 
             if (this.player1.life < 1){
+                this.winSound.play();
                 this.objectGenLoop.destroy();
                 this.physics.pause();
                 this.add.image(constants.WIDTH/2 - 90, constants.HEIGHT/2, 'player2').setScale(3).setAngle(-90);
                 this.add.text(constants.WIDTH/2 + 10, constants.HEIGHT/2 - 30, "Won!", {fill: '#FFFFFF', fontSize: 64});
-                this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
+                this.click = this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
+                this.tweens.addCounter({from: 0.3, to: 1, duration: 1000, yoyo: true, loop: -1,
+                    onUpdate: (tween) => {this.click.setAlpha(tween.getValue());}
+                });
                 this.input.on('pointerdown', () => {
+                    this.winSound.stop();
                     this.scene.stop('Space');
                     this.scene.start('Start');
                 });
@@ -212,12 +219,17 @@ class Space extends Phaser.Scene {
             this.lifeDisplay2.setText(this.player2.life);
 
             if (this.player2.life < 1){
+                this.winSound.play();
                 this.objectGenLoop.destroy();
                 this.physics.pause();
                 this.add.image(constants.WIDTH/2 - 90, constants.HEIGHT/2, 'player1').setScale(3).setAngle(-90);
                 this.add.text(constants.WIDTH/2 + 10, constants.HEIGHT/2 - 30, "Won!", {fill: '#FFFFFF', fontSize: 64});
-                this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
+                this.click = this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
+                this.tweens.addCounter({from: 0.3, to: 1, duration: 1000, yoyo: true, loop: -1,
+                    onUpdate: (tween) => {this.click.setAlpha(tween.getValue());}
+                });
                 this.input.on('pointerdown', () => {
+                    this.winSound.stop();
                     this.scene.stop('Space');
                     this.scene.start('Start');
                 });
