@@ -13,7 +13,7 @@ class Space extends Phaser.Scene {
         this.load.atlas('asteroid', 'src/images/asteroid.png', 'src/images/asteroid.json');
         this.load.spritesheet('spike', 'src/images/spike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
         this.load.spritesheet('explosion', 'src/images/explosion.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
-        this.load.spritesheet('appearingExplosion', 'src/images/appearingExplosion.png', {frameWidth: 32, frameHeight: 32, endFrame: 20});
+        this.load.spritesheet('appearingExplosion', 'src/images/appearingExplosion.png', {frameWidth: 205, frameHeight: 195, endFrame: 13});
         this.load.image('hud1', 'src/images/hud1.png');
         this.load.image('hud2', 'src/images/hud2.png');
         this.load.image('heavyBullet', 'src/images/heavyBullet.png');
@@ -49,7 +49,7 @@ class Space extends Phaser.Scene {
         this.anims.create({key: 'asteroidAnim', frames: asteroidFrames, frameRate: 15, repeat: -1});
         this.anims.create({key: 'spikeAnim', frames: 'spike', frameRate: 15, repeat: -1});
         this.anims.create({key: 'explosionAnim', frames: 'explosion', frameRate: 15});
-        this.anims.create({key: 'appearingExplosionAnim', frames: 'appearingExplosion', frameRate: 15});
+        this.anims.create({key: 'appearingExplosionAnim', frames: 'appearingExplosion', frameRate: 20});
         this.anims.create({key: 'freezerAnim', frames: 'freezer', frameRate: 30, repeat: -1});
         this.anims.create({key: 'attractorAnim', frames: 'attractor', frameRate: 30, repeat: -1});
         this.anims.create({key: 'weakSpikeAnim', frames: 'weakSpike', frameRate: 15, repeat: -1});
@@ -196,6 +196,7 @@ class Space extends Phaser.Scene {
                 this.lifeDisplay1.setText(this.player2.life);
                 this.lifeSound.play();
             } else {
+                this.getObjectSound.play();
                 player.addItem(gift.giftType);
             }
             gift.destroy();
