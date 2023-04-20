@@ -6,6 +6,7 @@ class Space extends Phaser.Scene {
 
     preload() {
 
+        // Images
         this.load.image('player1', 'src/images/player1.png');
         this.load.image('player2', 'src/images/player2.png');
         this.load.image('bullet', 'src/images/bullet.png');
@@ -25,6 +26,7 @@ class Space extends Phaser.Scene {
         this.load.image('spikeGift', 'src/images/redGift.png');
         this.load.spritesheet('weakSpike', 'src/images/weakSpike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
 
+        // Sounds
         this.load.audio('appearanceSound', 'src/sounds/muffledExplosion.wav');
         this.load.audio('destroySound', 'src/sounds/bigExplosion.mp3');
         this.load.audio('bulletFireSound', 'src/sounds/bulletFire.ogg');
@@ -34,6 +36,7 @@ class Space extends Phaser.Scene {
         this.load.audio('getObjectSound', 'src/sounds/getObject.ogg');
         this.load.audio('freezeSound', 'src/sounds/freeze.ogg');
         this.load.audio('attractSound', 'src/sounds/attract.ogg');
+        this.load.audio('newSpikeSound', 'src/sounds/newSpike.ogg');
     }
 
     create() {
@@ -60,6 +63,7 @@ class Space extends Phaser.Scene {
         this.getObjectSound = this.sound.add('getObjectSound');
         this.freezeSound = this.sound.add('freezeSound');
         this.attractSound = this.sound.add('attractSound');
+        this.newSpikeSound = this.sound.add('newSpikeSound');
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -223,6 +227,7 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.asteroids, this.spikeBullets, (asteroid, spikeBullet) => {
             spikeBullet.destroy();
+            this.newSpikeSound.play();
             let weakSpike = this.weakSpikes.create(asteroid.x, asteroid.y);
             if(asteroid.attractor){
                 asteroid.attractor.captured = weakSpike;
