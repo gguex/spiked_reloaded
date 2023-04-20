@@ -140,7 +140,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
         this.life -= 1;
         this.setPosition(posX, posY);
         this.setVelocity(0);
-        this.setAngle(angle)
+        this.setAngle(angle);
     }
 
 }

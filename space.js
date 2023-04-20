@@ -125,7 +125,7 @@ class Space extends Phaser.Scene {
                 });
             }
         }
-        const objectGenLoop = this.time.addEvent({
+        this.objectGenLoop = this.time.addEvent({
             delay: 500,
             callback: objectGen,
             callbackScope: this,
@@ -163,6 +163,20 @@ class Space extends Phaser.Scene {
             this.destroySound.play();
             player.kill(constants.WIDTH/4, constants.HEIGHT/4, 0);
             this.lifeDisplay1.setText(this.player1.life);
+
+            if (this.player1.life < 1){
+                this.objectGenLoop.destroy();
+                this.physics.pause();
+                console.log(this.objectGenLoop)
+                this.add.image(constants.WIDTH/2 - 90, constants.HEIGHT/2, 'player2').setScale(3).setAngle(-90);
+                this.add.text(constants.WIDTH/2 + 10, constants.HEIGHT/2 - 30, "Won!", {fill: '#FFFFFF', fontSize: 64});
+                this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
+                this.input.on('pointerdown', () => {
+                    this.scene.stop('Space');
+                    this.scene.start('Start');
+                });
+            }
+    
         });
         this.physics.add.collider(this.player1, this.weakSpikes, (player, weakSpike) => {
             this.explosions.create(player.x, player.y);
@@ -197,6 +211,20 @@ class Space extends Phaser.Scene {
             this.destroySound.play();
             player.kill(3*constants.WIDTH/4, 3*constants.HEIGHT/4, 180);
             this.lifeDisplay2.setText(this.player2.life);
+
+            if (this.player2.life < 1){
+                this.objectGenLoop.destroy();
+                this.physics.pause();
+                console.log(this.objectGenLoop)
+                this.add.image(constants.WIDTH/2 - 90, constants.HEIGHT/2, 'player1').setScale(3).setAngle(-90);
+                this.add.text(constants.WIDTH/2 + 10, constants.HEIGHT/2 - 30, "Won!", {fill: '#FFFFFF', fontSize: 64});
+                this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
+                this.input.on('pointerdown', () => {
+                    this.scene.stop('Space');
+                    this.scene.start('Start');
+                });
+            }
+
         });
         this.physics.add.collider(this.player2, this.weakSpikes, (player, weakSpike) => {
             this.explosions.create(player.x, player.y);
@@ -322,7 +350,7 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.collider(this.heavyBullets, this.bullets, () => this.metalReboundSound.play());
         this.physics.add.collider(this.weakSpikes, this.weakSpikes, () => this.metalReboundSound.play());
-       
+
     }
 
     update() { 
@@ -369,6 +397,12 @@ class Space extends Phaser.Scene {
         }
         if (this.fireP2.isDown){
             this.player2.fire(this);
+        }
+
+        // Endgame conditions
+        if (this.player1.life < 1){
+        } 
+        if (this.player2.life < 1){
         }
 
         // Hud display player 1

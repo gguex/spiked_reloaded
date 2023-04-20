@@ -43,7 +43,7 @@ const config = {
       debug: false
 		}
     },
-    scene: [Space]
+    scene: [Start, Space]
 };
 
 const game = new Phaser.Game(config);
