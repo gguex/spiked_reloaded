@@ -12,6 +12,7 @@ class Space extends Phaser.Scene {
         this.load.atlas('asteroid', 'src/images/asteroid.png', 'src/images/asteroid.json');
         this.load.spritesheet('spike', 'src/images/spike.png', {frameWidth: 32, frameHeight: 32, endFrame: 16});
         this.load.spritesheet('explosion', 'src/images/explosion.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
+        this.load.spritesheet('appearingExplosion', 'src/images/appearingExplosion.png', {frameWidth: 32, frameHeight: 32, endFrame: 20});
         this.load.image('hud1', 'src/images/hud1.png');
         this.load.image('hud2', 'src/images/hud2.png');
         this.load.image('heavyBullet', 'src/images/heavyBullet.png');
@@ -29,6 +30,7 @@ class Space extends Phaser.Scene {
         this.load.audio('bulletFireSound', 'src/sounds/bulletFire.ogg');
         this.load.audio('lifeSound', 'src/sounds/life.ogg');
         this.load.audio('metalReboundSound', 'src/sounds/metalRebound.wav');
+        this.load.audio('specialFire', 'src/sounds/specialFire.wav');
     }
 
     create() {
@@ -40,6 +42,7 @@ class Space extends Phaser.Scene {
         this.anims.create({key: 'asteroidAnim', frames: asteroidFrames, frameRate: 15, repeat: -1});
         this.anims.create({key: 'spikeAnim', frames: 'spike', frameRate: 15, repeat: -1});
         this.anims.create({key: 'explosionAnim', frames: 'explosion', frameRate: 15});
+        this.anims.create({key: 'appearingExplosionAnim', frames: 'appearingExplosion', frameRate: 15});
         this.anims.create({key: 'freezerAnim', frames: 'freezer', frameRate: 30, repeat: -1});
         this.anims.create({key: 'attractorAnim', frames: 'attractor', frameRate: 30, repeat: -1});
         this.anims.create({key: 'weakSpikeAnim', frames: 'weakSpike', frameRate: 15, repeat: -1});
@@ -50,6 +53,7 @@ class Space extends Phaser.Scene {
         this.bulletFireSound = this.sound.add('bulletFireSound');
         this.lifeSound = this.sound.add('lifeSound');
         this.metalReboundSound = this.sound.add('metalReboundSound');
+        this.specialFire = this.sound.add('specialFire');
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -64,6 +68,7 @@ class Space extends Phaser.Scene {
         this.spikeBullets = this.add.group({classType: SpikeBullet});
         this.weakSpikes = this.add.group({classType: WeakSpike, runChildUpdate: true});
         this.explosions = this.add.group({classType: Explosion, runChildUpdate: true});
+        this.appearingExplosions = this.add.group({classType: AppearingExplosion, runChildUpdate: true});
 
         // Hud
         this.hud1 = this.add.image(20, 20, 'hud1').setScale(0.5);
@@ -85,9 +90,9 @@ class Space extends Phaser.Scene {
                 let posY = Math.random() * constants.HEIGHT;
                 let speedX = Math.random() * 300;
                 let speedY = Math.random() * 300;
-                let explosion = this.explosions.create(posX, posY);
+                let appearingExplosion = this.appearingExplosions.create(posX, posY);
                 this.appearanceSound.play();
-                explosion.on('animationcomplete', () => {
+                appearingExplosion.on('animationcomplete', () => {
                     let roll2 = Math.random();
                     if(roll2 > 0.6){
                         let asteroid = this.asteroids.create(posX, posY);
@@ -200,8 +205,8 @@ class Space extends Phaser.Scene {
             gift.destroy();
         });
         this.physics.add.collider(this.asteroids, this.asteroids);
-        this.physics.add.collider(this.asteroids, this.bullets);
-        this.physics.add.collider(this.asteroids, this.heavyBullets);
+        this.physics.add.collider(this.asteroids, this.bullets,  () => this.metalReboundSound.play());
+        this.physics.add.collider(this.asteroids, this.heavyBullets, () => this.metalReboundSound.play());
         this.physics.add.overlap(this.asteroids, this.freezers, (asteroid, freezer) => {
             freezer.capture(asteroid);
         });
