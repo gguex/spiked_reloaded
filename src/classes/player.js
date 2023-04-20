@@ -44,7 +44,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
 
             switch(this.items[this .itemsPointer - 1]){
                 case 'heavyBulletGift':
-                    scene.specialFire.play();
+                    scene.specialFireSound.play();
                     let heavyBullet = scene.heavyBullets.create();
                     let heavyBulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
                     heavyBullet.setPosition (
@@ -59,7 +59,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                     this.itemsPointer -= 1;
                     break;
                 case 'freezerGift':
-                    scene.specialFire.play();
+                    scene.specialFireSound.play();
                     let freezer = scene.freezers.create();
                     let freezerDirection = scene.physics.velocityFromRotation(this.rotation, 1);
                     freezer.setPosition (
@@ -74,7 +74,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                     this.itemsPointer -= 1;
                     break;
                 case 'attractorGift':
-                    scene.specialFire.play();
+                    scene.specialFireSound.play();
                     let attractor = scene.attractors.create();
                     attractor.fireFrom = this;
                     let attractorDirection = scene.physics.velocityFromRotation(this.rotation, 1);
@@ -90,7 +90,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
                     this.itemsPointer -= 1;
                     break;
                 case 'spikeGift':
-                    scene.specialFire.play();
+                    scene.specialFireSound.play();
                     let spikeBullet = scene.spikeBullets.create();
                     let spikeBulletDirection = scene.physics.velocityFromRotation(this.rotation, 1);
                     spikeBullet.setPosition (

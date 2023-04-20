@@ -30,7 +30,8 @@ class Space extends Phaser.Scene {
         this.load.audio('bulletFireSound', 'src/sounds/bulletFire.ogg');
         this.load.audio('lifeSound', 'src/sounds/life.ogg');
         this.load.audio('metalReboundSound', 'src/sounds/metalRebound.wav');
-        this.load.audio('specialFire', 'src/sounds/specialFire.wav');
+        this.load.audio('specialFireSound', 'src/sounds/specialFire.wav');
+        this.load.audio('getObjectSound', 'src/sounds/getObject.ogg');
     }
 
     create() {
@@ -53,7 +54,8 @@ class Space extends Phaser.Scene {
         this.bulletFireSound = this.sound.add('bulletFireSound');
         this.lifeSound = this.sound.add('lifeSound');
         this.metalReboundSound = this.sound.add('metalReboundSound');
-        this.specialFire = this.sound.add('specialFire');
+        this.specialFireSound = this.sound.add('specialFireSound');
+        this.getObjectSound = this.sound.add('getObjectSound');
 
         // Game objects
         this.player1 = new Player(this, constants.WIDTH/4, constants.HEIGHT/4, 'player1');
@@ -196,10 +198,11 @@ class Space extends Phaser.Scene {
         });
         this.physics.add.overlap(this.player2, this.gifts, (player, gift) => {
             if(gift.giftType == 'lifeGift'){
+                this.lifeSound.play();
                 player.life += 1;
                 this.lifeDisplay2.setText(this.player2.life);
-                this.lifeSound.play();
             } else {
+                this.getObjectSound.play();
                 player.addItem(gift.giftType);
             }
             gift.destroy();
