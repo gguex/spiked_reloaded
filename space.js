@@ -167,7 +167,6 @@ class Space extends Phaser.Scene {
             if (this.player1.life < 1){
                 this.objectGenLoop.destroy();
                 this.physics.pause();
-                console.log(this.objectGenLoop)
                 this.add.image(constants.WIDTH/2 - 90, constants.HEIGHT/2, 'player2').setScale(3).setAngle(-90);
                 this.add.text(constants.WIDTH/2 + 10, constants.HEIGHT/2 - 30, "Won!", {fill: '#FFFFFF', fontSize: 64});
                 this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
@@ -215,7 +214,6 @@ class Space extends Phaser.Scene {
             if (this.player2.life < 1){
                 this.objectGenLoop.destroy();
                 this.physics.pause();
-                console.log(this.objectGenLoop)
                 this.add.image(constants.WIDTH/2 - 90, constants.HEIGHT/2, 'player1').setScale(3).setAngle(-90);
                 this.add.text(constants.WIDTH/2 + 10, constants.HEIGHT/2 - 30, "Won!", {fill: '#FFFFFF', fontSize: 64});
                 this.add.text(constants.WIDTH/2, constants.HEIGHT/2 + 100, "Click to continue", {fontStyle: 'italic', fill: '#FFFFFF', fontSize: 16}).setOrigin(0.5, 0.5);
